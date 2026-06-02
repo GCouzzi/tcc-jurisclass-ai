@@ -7,6 +7,10 @@ df_train = pd.read_csv("dataset_victor/train_small.csv")
 df_val   = pd.read_csv("dataset_victor/validation_small.csv")
 df_test  = pd.read_csv("dataset_victor/test_small.csv")
 
+df_train = df_train[df_train["document_type"] != "outros"].copy()
+df_val   = df_val[df_val["document_type"] != "outros"].copy()
+df_test  = df_test[df_test["document_type"] != "outros"].copy()
+
 def clean_text(text: str) -> str:
     if not isinstance(text, str):
         return ""

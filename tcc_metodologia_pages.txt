@@ -1,0 +1,537 @@
+
+--- PAGE 30 ---
+28
+se a alta dimensionalidade dos dados textuais, decorrente do grande tamanho do
+vocabulário, a geração de representações esparsas e a dificuldade de capturar rela-
+ções semânticas e contextuais entre palavras (DALAL; ZAVERI, 2011). Diante desses
+desafios, técnicas de representação textual desempenham um papel fundamental ao
+transformar documentos em vetores numéricos estruturados, viabilizando seu proces-
+samento por algoritmos de aprendizado de máquina (KOWSARI et al., 2019). Essas
+abordagens refletem uma evolução dos modelos tradicionais baseados em frequên-
+cia para representações distribuídas, mais adequadas para a captura de aspectos
+semânticos e contextuais da linguagem (PATIL et al., 2023).
+As técnicas tradicionais fundamentam-se na frequência de termos. Entre as mais
+comuns, destaca-se o Bag-of-Words, que descreve um documento pela frequência ou
+presença de palavras de um vocabulário, negligenciando, porém, a ordem gramatical
+e a semântica. Para mitigar limitações de relevância, utiliza-se frequentemente o TF-
+IDF (Term Frequency–Inverse Document Frequency), que atribui pesos aos termos
+conforme sua importância relativa no corpus, destacando palavras com maior poder
+discriminativo (PATIL et al., 2023).
+Em uma perspectiva mais avançada, surgiram as representações distribuídas, ou word
+embeddings. Diferentemente dos modelos anteriores, métodos como Word2Vec e
+Global Vectors for Word Representation (GloVe) representam palavras como veto-
+res densos em espaços contínuos, capturando similaridades semânticas a partir do
+contexto de coocorrência em grandes volumes de dados (PATIL et al., 2023).
+Apesar dos avanços das embeddings estáticas, essas representações ainda apresen-
+tam limitações por não considerarem o contexto de uso das palavras. Para superar
+essa restrição, a arquitetura Transformer revolucionou a área com modelos como o
+BERT (DEVLIN et al., 2019). Diferentemente das embeddings estáticas, esses modelos
+geram representações contextuais, nas quais o vetor de uma palavra se altera conforme
+sua vizinhança na frase. Essa característica permite capturar relações semânticas e
+sintáticas altamente complexas, o que tem sido associado a melhorias de desempenho
+em aplicações de classificação de texto (PATIL et al., 2023).
+Após a representação textual, a escolha do algoritmo de classificação é essencial.
+
+--- PAGE 31 ---
+29
+O Naïve Bayes Classifier (NBC) é um modelo probabilístico baseado no teorema de
+Bayes, que assume independência condicional entre as palavras, sendo amplamente
+utilizado em tarefas de classificação de textos por sua simplicidade e eficiência. As
+Support Vector Machines (SVM) buscam o hiperplano ótimo que separa categorias,
+funcionando bem em dados de alta dimensão e sendo frequentemente utilizadas como
+referência para novos modelos. As Árvores de Decisão (Decision Tree Classifier -
+DTC) dividem recursivamente o espaço de dados com base em atributos, gerando uma
+estrutura hierárquica de decisão composta por nós e ramos, na qual cada caminho
+representa uma regra de classificação. Essa abordagem permite a construção de
+modelos interpretáveis e de fácil compreensão (KOWSARI et al., 2019).
+Dentre os algoritmos utilizados, destacam-se também abordagens baseadas em deep
+learning (aprendizado profundo), que têm sido aplicadas na modelagem de relações
+semânticas mais complexas em textos (KOWSARI et al., 2019). Nesse contexto, arqui-
+teturas do tipo Transformer desempenham papel tanto na geração de representações
+contextuais quanto na etapa de classificação. Esses modelos buscam superar limita-
+ções de abordagens sequenciais tradicionais ao utilizar mecanismos de autoatenção, o
+que favorece a captura de dependências de longo alcance e o processamento paralelo
+de sequências. Em tarefas de classificação de texto, sua aplicação ocorre, em geral,
+por meio de adaptação para tarefas específicas (fine-tuning), na qual uma camada de
+saída é adicionada para a predição das classes (ISLAM et al., 2024).
+Considerando esse cenário, abordagens baseadas em deep learning têm sido ampla-
+mente investigadas na classificação de documentos jurídicos. Textos da área do Direito
+caracterizam-se por elevada complexidade, uso de jargão especializado e estruturas
+sintáticas extensas, o que pode limitar a eficácia de técnicas tradicionais baseadas em
+representações superficiais. Nesse contexto, modelos baseados na arquitetura BERT,
+como o LegalBert-pt (SILVEIRA et al., 2023), têm sido propostos para lidar com textos
+jurídicos em português. Diferentemente de abordagens que utilizam representações
+vetoriais estáticas, esses modelos permitem a incorporação de contexto na represen-
+tação textual, favorecendo a modelagem de relações semânticas e sintáticas mais
+complexas e sua aplicação em tarefas como a categorização de petições, decisões e
+outros documentos legais.
+
+--- PAGE 32 ---
+30
+4 METODOLOGIA
+A triagem e a classificação manual de um alto volume de peças processuais repre-
+sentam um dos maiores gargalos operacionais na rotina de escritórios de advocacia
+(SILVA; FABIANI; FEFERBAUM, 2021). Para superar esse desafio estrutural e lidar com
+a complexidade e as nuances do vocabulário forense, revisões sistemáticas recentes da
+literatura demonstram que modelos de Processamento de Linguagem Natural baseados
+na arquitetura Transformer superam abordagens tradicionais e representam o estado
+da arte para a área jurídica, justificando sua adoção em soluções práticas (MARTINS;
+SILVA, 2022).
+Alinhando-se a esse panorama, este capítulo detalha os procedimentos adotados para
+a construção do sistema JurisClass AI. Nesse contexto, a contribuição original deste
+trabalho é dupla: (i) a identificação de uma configuração otimizada de hiperparâmetros
+para o fine-tuning do modelo LegalBERT-pt sobre o corpus VICTOR, por meio de
+busca em grade sistemática; e (ii) o desenvolvimento de um painel web que viabiliza a
+utilização prática do modelo por operadores jurídicos, abstraindo a complexidade e a
+necessidade de conhecimento técnico em inteligência artificial.
+A Figura 1 ilustra o fluxo geral das etapas que constituem o trabalho. São apresentados
+o delineamento da pesquisa, os procedimentos de obtenção do conjunto de dados, as
+etapas de pré-processamento, a definição da arquitetura e o treinamento do modelo
+de Processamento de Linguagem Natural, bem como a implementação do painel web
+desenvolvido para sua utilização e, por fim, a validação da solução.
+4.1
+DELINEAMENTO DA PESQUISA
+Este estudo caracteriza-se como uma pesquisa aplicada, pois tem como objetivo
+solucionar um problema prático específico: a classificação automática de documentos
+jurídicos. Possui abordagem quantitativa, uma vez que a avaliação dos resultados é
+realizada a partir da comparação com modelos de referência e do uso de métricas
+numéricas, como acurácia, precisão, recall e F1-score. O delineamento adotado é
+experimental, envolvendo o treinamento e a comparação do modelo em condições
+controladas, com a separação dos dados em conjuntos de treino, validação e teste,
+
+--- PAGE 33 ---
+31
+Figura 1 – Fluxo metodológico do trabalho.
+Fonte: Gerada pelo ChatGPT (2026).
+além do emprego de validação cruzada. Ressalta-se que a análise está centrada
+exclusivamente no desempenho preditivo do modelo, não abrangendo aspectos de
+usabilidade ou experiência do usuário, os quais não fazem parte do escopo deste
+trabalho.
+4.2
+OBTENÇÃO DO CORPUS
+A etapa inicial da metodologia consistiu na busca e obtenção de conjuntos de dados
+específicos para o domínio jurídico em língua portuguesa.
+4.2.1
+Critérios de seleção do corpus
+Para a definição dos conjuntos de dados, foram estabelecidos critérios de seleção com
+o objetivo de abranger diferentes níveis estruturais e semânticos dos textos jurídicos
+brasileiros. A busca foi conduzida em diversas plataformas, como GitHub, Kaggle e
+Hugging Face, além da análise de artigos científicos relacionados ao tema. Entre os
+conjuntos encontrados, destacou-se o corpus VICTOR (ARAUJO et al., 2020), oriundo
+do Supremo Tribunal Federal, que constitui a principal base de peças processuais
+em larga escala. Esse corpus se caracteriza pelo elevado volume de dados e por
+
+--- PAGE 34 ---
+32
+ter sido rotulado por uma equipe de especialistas da área jurídica, o que justifica sua
+utilização no treinamento de modelos voltados à tarefa de categorização automática de
+documentos judiciais.
+4.2.2
+Caracterização estrutural do VICTOR
+O corpus é estruturado em diferentes atributos que descrevem tanto o conteúdo quanto
+o contexto dos documentos. Os principais campos são:
+• themes: representa a classe temática associada ao processo judicial, sendo
+codificada por meio de valores inteiros;
+• process_id: identificador único do processo judicial;
+• file_name: nome do arquivo correspondente ao processo no corpus;
+• document_type: indica o tipo do documento jurídico, sendo classificado nas
+seguintes categorias: Acórdão, referente a decisões de tribunais; Recurso Extra-
+ordinário (RE), referente a petições de recurso; Agravo de Recurso Extraordinário
+(ARE), referente a impugnações ao recurso; Despacho, referente a decisões
+interlocutórias ou ordens judiciais; Sentença, referente a decisões judiciais de
+primeira instância; e Others (Outros), para documentos que não se enquadram
+nas categorias anteriores;
+• pages: indica a página do documento à qual o registro se refere;
+• body: contém um trecho do conteúdo textual presente na respectiva página do
+documento.
+A Tabela 2 apresenta exemplos de registros do dataset VICTOR. Observa-se que os
+dados estão organizados em nível de página, e não de documento completo. Dessa
+forma, um mesmo processo judicial pode estar associado a múltiplos registros, cada
+um correspondente a uma página distinta do arquivo original. Essa característica
+implica maior granularidade dos dados, o que influencia diretamente as etapas de
+pré-processamento e modelagem.
+
+--- PAGE 35 ---
+33
+Tabela 2 – Exemplos de registros do dataset VICTOR
+themes process_id
+file_name
+doc_type pages body
+[139]
+ARE_1134608 ARE_..._30.pdf sentenca
+1
+“poder judiciário jus-
+tiça federal seção judi-
+ciária paraná. . . ”
+[139]
+ARE_1134608 ARE_..._30.pdf sentenca
+2
+“reconhecimento
+di-
+reito incorporação das
+gratificações. . . ”
+[139]
+ARE_1134608 ARE_..._30.pdf sentenca
+3
+“caso dos autos crité-
+rios avaliação regula-
+mentados. . . ”
+4.2.3
+Volume e distribuição dos dados
+O corpus VICTOR possui três versões diferentes disponíveis:
+• BVic: versão completa do dataset VICTOR, contendo todos os documentos,
+inclusive aqueles não rotulados;
+• MVic: subconjunto filtrado do BVic, no qual foram removidos documentos sem
+rotulação, permitindo sua utilização tanto para classificação temática quanto para
+classificação do tipo de documento;
+• SVic: subconjunto reduzido do MVic, obtido pela limitação do número de proces-
+sos por tema, com o objetivo de facilitar o compartilhamento e experimentação
+em cenários com menor volume de dados;
+A versão utilizada neste trabalho foi a versão SVic, conforme descrito por Araujo et al.
+(2020), a qual possui 6.510 Recursos Extraordinários, totalizando 94.267 documentos
+e 339.478 páginas. Os dados estão divididos em três subconjuntos: treinamento,
+validação e teste. O conjunto de treinamento contém 40.294 documentos e 149.217
+páginas, o conjunto de validação possui 27.093 documentos e 94.735 páginas e o
+conjunto de teste é composto por 26.880 documentos e 95.526 páginas.
+
+--- PAGE 36 ---
+34
+A Tabela 3 apresenta a distribuição por classes no SVic:
+Tabela 3 – Distribuição de páginas por classe no SVic. Fonte: Adaptado de (ARAUJO
+et al., 2020).
+Classe
+Treino
+Validação
+Teste
+Acórdão
+553
+299
+273
+ARE
+2.546
+2.149
+1.841
+Despacho
+346
+183
+198
+Others
+134.134
+84.104
+85.408
+RE
+9.509
+6.364
+6.331
+Sentença
+2.129
+1.636
+1.475
+Nota-se que a classe Others concentra a maior parte dos documentos, caracterizando
+um cenário de forte desbalanceamento entre as classes. Embora represente a grande
+maioria dos registros, ela atua como uma categoria residual que agrupa documentos
+de naturezas diversas, não caracterizando um tipo documental jurídico estruturado.
+A presença dessa classe introduz um alto nível de ruído semântico e compromete a
+capacidade do modelo de distinguir as peças processuais fundamentais.
+Por essa razão, optou-se por remover a classe Others do escopo de treinamento e
+avaliação deste trabalho. Com essa filtragem, o dataset passa a focar exclusivamente
+nos cinco tipos documentais de maior relevância processual, o que também será
+considerado nas etapas de pré-processamento, treinamento e avaliação dos modelos.
+4.3
+PRÉ-PROCESSAMENTO DOS DADOS
+Após a obtenção do corpus e a análise de sua estrutura e distribuição, os dados
+foram submetidos a uma etapa de pré-processamento e limpeza textual, uma vez que
+os dados textuais raramente se encontram em estado adequado para uso direto em
+modelos computacionais (ELOV; KHAMROEVA; XUSAINOVA, 2023). Esse processo
+teve como objetivo reduzir ruídos provenientes da extração dos documentos, padronizar
+o conteúdo textual e adequá-lo às especificações do modelo LegalBert-pt (SILVEIRA et
+al., 2023).
+
+--- PAGE 37 ---
+35
+4.3.1
+Limpeza e normalização textual
+Nesta etapa, foi realizada a limpeza e normalização dos textos com o objetivo de
+reduzir ruídos provenientes do processo de extração dos documentos e padronizar
+sua estrutura textual. Foram removidas sequências artificiais de caracteres repetidos,
+como linhas contínuas de sublinhados (por exemplo, __________), que não possuem
+conteúdo semântico, caracteres não informativos, espaços em branco redundantes e a
+substituição de quebras de linha por espaços simples, garantindo maior uniformidade
+na representação textual.
+Optou-se por preservar a capitalização original e a acentuação dos termos, uma vez
+que o modelo LegalBert-pt (SILVEIRA et al., 2023) é sensível a essas características
+linguísticas. Adicionalmente, diferentemente de abordagens tradicionais de Processa-
+mento de Linguagem Natural, não foram aplicadas técnicas como stemming e remoção
+de stopwords. Essa decisão fundamenta-se na capacidade do modelo de capturar o
+contexto semântico completo dos textos, sendo que a remoção ou alteração desses
+elementos poderia comprometer a representação adequada das nuances da linguagem
+jurídica.
+4.3.2
+Tokenização
+A segmentação dos textos em unidades menores é realizada pelo tokenizador do
+modelo LegalBert-pt (SILVEIRA et al., 2023), baseado na abordagem de subpalavras
+WordPiece (SCHUSTER; NAKAJIMA, 2012). Nesse processo, a segmentação adota
+uma estratégia de correspondência mais longa da esquerda para a direita (left-to-right
+longest-match-first), dividindo os textos em tokens que podem corresponder a palavras
+completas ou fragmentos (MIELKE et al., 2021). Essa abordagem, popularizada por
+modelos como o BERT (DEVLIN et al., 2019), permite uma melhor representação de
+termos raros e do complexo vocabulário jurídico.
+Após a tokenização, os textos são convertidos em representações numéricas, compos-
+tas por input IDs e attention masks, que indicam, respectivamente, os identificadores
+dos tokens e quais posições devem ser consideradas pelo modelo. Essas estrutu-
+ras constituem o formato de entrada exigido pela arquitetura Transformer utilizada no
+
+--- PAGE 38 ---
+36
+modelo.
+4.3.3
+Balanceamento de classes
+Conforme observado na Tabela 3, o dataset VICTOR apresenta um severo desbalan-
+ceamento entre as classes, com a categoria Others concentrando a maior parte das
+amostras, enquanto as demais classes possuem quantidades significativamente meno-
+res. Conforme descrito por Araujo et al. (2020), esse cenário pode induzir o modelo a
+apresentar viés em direção à classe majoritária durante o treinamento, reduzindo sua
+capacidade de generalização e o desempenho sobre as classes minoritárias.
+Para mitigar esse problema, adotou-se a técnica de ponderação de classes, também
+conhecida como Inverse Frequency Weighting (IFW) ou class weights. A estratégia
+consiste em atribuir pesos inversamente proporcionais à frequência de cada classe no
+conjunto de treinamento, fazendo com que erros nas categorias menos representadas
+recebam maior penalização na função de perda (Cross-Entropy). Essa abordagem é
+consistente com a estratégia empregada por Araujo et al. (2020), que adotam essa
+ponderação em seus experimentos com SVM para compensar o desbalanceamento
+presente no dataset VICTOR. Além disso, investigações recentes com Transformers
+em textos jurídicos adotam IFW como ponto de partida nos experimentos com funções
+de perda, reconhecendo sua simplicidade de implementação e dispensa de ajuste de
+hiperparâmetros (WAIS; GRABMAIR, 2025). Diante disso, optou-se pela utilização de
+class weights na função de perda padrão durante o processo de fine-tuning do modelo
+LegalBert-pt (SILVEIRA et al., 2023).
+4.4
+AJUSTE FINO DO MODELO
+Esta seção detalha o processo de fine-tuning (ajuste fino) do modelo de processamento
+de linguagem natural responsável pela rotulação de documentos jurídicos.
+4.4.1
+Arquitetura
+A arquitetura da solução proposta fundamenta-se no modelo pré-treinado LegalBert-
+pt (SILVEIRA et al., 2023), um modelo de linguagem desenvolvido especificamente
+
+--- PAGE 39 ---
+37
+para o processamento de textos do domínio jurídico em língua portuguesa. Entre as
+versões disponíveis deste modelo, optou-se pela utilização da variante construída a
+partir do modelo BERTimbau Base (neuralmind/bertbase-portuguese-cased) (SOUZA;
+NOGUEIRA; LOTUFO, 2020), herdando, portanto, sua estrutura de rede neural com
+aproximadamente 110 milhões de parâmetros.
+A escolha pela versão cased (sensível à capitalização) justifica-se pela sua capacidade
+de preservar nuances semânticas que são essenciais no contexto jurídico. Para o
+pré-processamento das sequências textuais, o tokenizador adotado seguiu a implemen-
+tação original da arquitetura BERT, baseada no algoritmo de subpalavras WordPiece.
+Por fim, em termos de infraestrutura de software, a instanciação do modelo e de
+seu tokenizador foi realizada utilizando a biblioteca Transformers, desenvolvida pela
+Hugging Face. Além disso, todo o fluxo computacional foi orquestrado sobre a biblioteca
+PyTorch, permitindo a execução otimizada das operações matriciais do modelo em
+unidades de processamento gráfico (GPUs).
+4.4.2
+Definição de hiperparâmetros
+Para otimizar o desempenho do modelo, conduziu-se uma busca em grade (Grid Se-
+arch) com o objetivo de identificar a configuração de hiperparâmetros mais adequada
+ao corpus jurídico utilizado. Nessa etapa, o algoritmo foi submetido a todas as combi-
+nações predefinidas, sendo treinado no conjunto de treinamento e avaliado no conjunto
+de validação, a fim de selecionar a parametrização de maior eficácia preditiva.
+Foram avaliadas sistematicamente diferentes combinações dos seguintes parâmetros:
+• Épocas de treinamento (epochs): [1, 3, 5]
+• Tamanho do lote (batch size): [8, 16, 32]
+• Taxa de aprendizado (learning rate): [2×10−5, 5×10−5]
+• Passos de aquecimento (warmup steps): [100, 500]
+
+--- PAGE 40 ---
+38
+A partir dos experimentos realizados, selecionou-se a configuração que apresentou
+melhor desempenho geral, considerando menor taxa de erro e maior estabilidade das
+métricas de avaliação. Esses hiperparâmetros foram então adotados como configuração
+final para o treinamento e a avaliação do modelo.
+A Tabela 4 apresenta os valores finais selecionados, os quais compõem o ambiente ex-
+perimental adotado para o treinamento definitivo e a avaliação do modelo no JurisClass
+AI.
+Tabela 4 – Configuração final dos hiperparâmetros selecionados.
+Hiperparâmetro
+Valor Selecionado
+Épocas de treinamento (epochs)
+3
+Tamanho do lote (batch size)
+8
+Taxa de aprendizado (learning rate)
+2×10−5
+Passos de aquecimento (warmup steps)
+500
+4.4.3
+Estratégia de treinamento e Cross-Validation
+Para atestar a capacidade de generalização do modelo para dados não vistos, o
+processo de treinamento foi conduzido utilizando a técnica de validação cruzada em k
+vias (k-fold cross-validation), com k = 5.
+Nesta abordagem, o particionamento interno foi realizado diretamente sobre o conjunto
+de treinamento original, dividindo-o em cinco subconjuntos (ou folds). Para evitar viés
+na avaliação, esses folds internos foram criados mantendo proporções de classes
+similares aos dados originais (stratified k-fold), uma prática recomendada para fornecer
+estimativas de desempenho mais estáveis e confiáveis (KOHAVI et al., 1995). A cada
+iteração, o modelo foi treinado em quatro desses subconjuntos e avaliado no quinto
+subconjunto restante. Esse processo foi repetido cinco vezes, de modo que cada fold
+atuou como validação interna exatamente uma vez. O conjunto de teste foi mantido
+estritamente separado e utilizado exclusivamente na etapa final de avaliação do modelo.
+
+--- PAGE 41 ---
+39
+4.5
+IMPLEMENTAÇÃO DO PAINEL WEB
+Para viabilizar a utilização da solução proposta, foi desenvolvido um painel web inte-
+grado ao modelo previamente treinado. Esta seção apresenta a arquitetura adotada, as
+tecnologias utilizadas e as funcionalidades disponibilizadas pelo painel desenvolvido.
+4.5.1
+Arquitetura do sistema
+O painel foi desenvolvido como uma aplicação web, utilizando a arquitetura cliente-
+servidor.
+• Interface do Usuário (Front-end): O lado cliente da aplicação, desenvolvido
+utilizando tecnologias web nativas (HTML5, CSS3 e JavaScript puro), é respon-
+sável por receber a interação do usuário, permitindo o upload de documentos
+jurídicos ou a inserção direta de textos. Por meio de requisições assíncronas, o
+front-end envia os dados ao servidor e, após o processamento, atualiza a tela
+dinamicamente para apresentar os resultados, exibindo a categoria processual
+predita e o respectivo grau de confiança da análise.
+• Servidor e API de Integração (Back-end): Desenvolvido em Python, atua como
+o núcleo da aplicação. Ele expõe uma API RESTful responsável por intermediar a
+comunicação entre o cliente e o modelo de inteligência artificial. Este componente
+recebe as requisições HTTP enviadas pelo front-end, orquestra todo o fluxo de
+processamento interno (acionando a extração de texto e a inferência do modelo)
+e retorna os resultados estruturados em formato JSON para o usuário.
+• Módulo de Processamento de Documentos: Um componente dedicado à
+manipulação dos arquivos submetidos pelo usuário (como PDFs). Este módulo
+é responsável por extrair o conteúdo textual bruto das páginas. Em conjunto
+com este módulo, atua uma rotina centralizada de higienização, responsável por
+realizar a limpeza prévia do texto (removendo ruídos de formatação e caracte-
+res inválidos) independentemente da sua origem de entrada, garantindo que o
+conteúdo entregue à inteligência artificial esteja no formato ideal.
+
+--- PAGE 42 ---
+40
+• Módulo de Inferência (NLP): Centraliza toda lógica do modelo de processamento
+de linguagem natural. Este módulo atua como o motor de inteligência da aplicação,
+recebendo o texto já limpo, realizando a tokenização e executando a classificação
+propriamente dita.
+4.5.2
+Tecnologias e ferramentas
+Esta seção especifica as principais tecnologias utilizadas no desenvolvimento da
+solução. Estas foram:
+• Back-end e API RESTful: A linguagem base escolhida foi o Python, devido à sua
+vasta adoção e ecossistema consolidado no campo do aprendizado de máquina.
+Para a construção da API, adotou-se o framework FastAPI, escolhido por sua
+leveza, alta performance e suporte a requisições assíncronas, sendo responsável
+por orquestrar a comunicação da aplicação.
+• Processamento de Linguagem Natural: A operação do modelo LegalBert-
+pt e de seu respectivo tokenizador foi viabilizada pela biblioteca Transformers,
+desenvolvida pela Hugging Face. O PyTorch foi empregado como biblioteca
+de base estrutural, fornecendo o suporte computacional em nível de tensores
+necessário para a execução das inferências da rede neural.
+• Processamento de Documentos: Para realizar a extração do conteúdo textual
+bruto dos arquivos PDF submetidos, utilizou-se a biblioteca PyMuPDF. Essa
+ferramenta foi selecionada por sua eficiência na leitura estruturada de páginas,
+viabilizando o envio rápido do texto para a etapa de higienização.
+• Front-end (Interface do Usuário): A interface gráfica foi desenvolvida sem a
+dependência de frameworks, utilizando o padrão web nativo: HTML5 para a estru-
+turação semântica, CSS3 para a estilização e responsividade visual, e JavaScript
+puro para a manipulação do DOM (Document Object Model) e comunicação
+assíncrona com o servidor.
+
+--- PAGE 43 ---
+41
+4.5.3
+Integração do modelo
+A integração entre o servidor e o modelo de linguagem natural ocorre de forma nativa,
+uma vez que toda a infraestrutura compartilha o ecossistema Python. Essa unificação
+arquitetural permite a troca de informações diretamente em memória, minimizando a
+latência. O fluxo de integração operacionaliza-se nas seguintes etapas:
+1. Recepção e extração: A API recebe o documento ou texto via requisição HTTP,
+e o Módulo de Processamento extrai e higieniza o conteúdo bruto.
+2. Tokenização: O texto pré-processado é encaminhado ao Módulo de Inferência
+e submetido ao tokenizador para ser convertido no formato vetorial exigido pela
+rede neural.
+3. Processamento da inferência: Os dados são executados no modelo que já
+se encontra previamente instanciado na memória do servidor, calculando as
+predições para cada classe documental.
+4. Estruturação e retorno: A categoria processual com maior probabilidade e
+seu respectivo grau de confiança são empacotados em uma estrutura JSON e
+devolvidos ao front-end para exibição ao usuário.
+4.5.4
+Funcionalidades do painel
+O painel web foi projetado com foco na usabilidade, oferecendo uma interface direta
+para a classificação automatizada de peças processuais. A principal funcionalidade do
+sistema consiste em permitir que o operador jurídico submeta um documento ou trecho
+de texto ao modelo de inteligência artificial e receba a sua respectiva categorização de
+forma ágil.
+Para atender a diferentes cenários de uso prático, o sistema disponibiliza dois métodos
+principais de entrada de dados: o upload de arquivos em formato PDF e a inserção
+direta de texto em um campo específico. Essa flexibilidade permite ao usuário tanto
+a análise integral de um documento original quanto a verificação rápida de trechos
+isolados.
+
+--- PAGE 44 ---
+42
+4.6
+VALIDAÇÃO E AVALIAÇÃO DE DESEMPENHO
+A etapa final da metodologia consiste na validação estatística da solução, estruturada
+em momentos complementares para garantir a confiabilidade das inferências realizadas
+pelo modelo e atestar o seu desempenho frente a abordagens já consolidadas na
+literatura.
+4.6.1
+Modelos de referência (baselines)
+Para avaliar a real eficácia da solução proposta e mensurar o impacto das decisões
+arquiteturais adotadas, o desempenho do JurisClass AI será comparado a um conjunto
+de modelos de referência (baselines). A inclusão dessas linhas de base é fundamental
+para posicionar o trabalho em relação às abordagens clássicas e ao estado da arte, per-
+mitindo isolar os ganhos de cada etapa do desenvolvimento. Os modelos selecionados
+para comparação são:
+• TF-IDF com SVM e Regressão Logística: Abordagens clássicas de extração
+de características combinadas com algoritmos tradicionais de aprendizado de
+máquina. Atuam como linhas de base de alta eficiência e interpretabilidade para
+a classificação textual;
+• Resultados originais do corpus VICTOR: Comparação direta com as métricas
+reportadas por Araujo et al. (2020) para as mesmas categorias, estabelecendo a
+referência natural da literatura para este conjunto de dados;
+• BERTimbau Base: Modelo de linguagem pré-treinado em português de domínio
+geral (SOUZA; NOGUEIRA; LOTUFO, 2020), que serviu como arquitetura fun-
+damental para a criação do LegalBert-pt (SILVEIRA et al., 2023). Sua utilização
+na comparação visa isolar o ganho trazido pelo pré-treinamento específico do
+LegalBert-pt;
+• LegalBert-pt com configuração padrão: Avaliação do modelo utilizando seus
+hiperparâmetros nativos, com o objetivo de evidenciar e justificar a validade da
+busca sistemática (Grid Search) proposta como contribuição metodológica neste
+trabalho.
+
+--- PAGE 45 ---
+43
+4.6.2
+Estratégia de seleção do modelo final e consolidação no conjunto de teste
+A primeira fase da avaliação consiste no monitoramento da estabilidade e generalização
+do modelo. Para isso, analisa-se a média e o desvio padrão das métricas obtidas nos
+5 folds da validação cruzada, assegurando que os hiperparâmetros selecionados
+permitem uma performance consistente e que o modelo não memorizou os dados de
+treinamento (overfitting).
+Após essa confirmação de estabilidade, a avaliação final no conjunto de teste indepen-
+dente será conduzida a partir de duas abordagens preditivas:
+1. Melhor modelo individual (Best Fold): Entre os cinco modelos treinados durante
+a validação cruzada, seleciona-se aquele que obteve o maior F1-Score em seu
+respectivo fold de validação. A escolha do F1-Score como métrica norteadora
+justifica-se pela sua capacidade de lidar com o severo desbalanceamento de
+classes presente no dataset VICTOR. Este modelo é então aplicado diretamente
+ao conjunto de teste.
+2. Combinação de modelos (Ensemble por Soft Voting): Adicionalmente, avalia-
+se uma estratégia de ensemble agregando os cinco modelos gerados no k-fold.
+Nesta abordagem, as probabilidades de saída (softmax) de cada modelo para
+uma dada amostra são calculadas e, em seguida, extrai-se a média dessas pro-
+babilidades. A classe final predita é aquela que apresentar a maior probabilidade
+média. O desempenho deste ensemble será comparado ao do melhor fold isolado
+para verificar potenciais ganhos de generalização e robustez.
+A eficácia dessas abordagens, bem como a dos baselines estabelecidos, será mensu-
+rada utilizando as seguintes métricas quantitativas:
+• Acurácia: Utilizada para medir o desempenho global do modelo por meio da
+proporção total de classificações corretas;
+• Precisão: Empregada para avaliar a exatidão das classificações realizadas pelo
+modelo em cada classe, penalizando os falsos positivos;
