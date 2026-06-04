@@ -1,0 +1,2 @@
+modelo,tfidf_max_features,tfidf_ngram_range,lr_C,lr_solver,class_weight,accuracy_test,f1_macro_test,f1_weighted_test
+TF-IDF + Regressão Logística,50000,"(1, 2)",1.0,lbfgs,balanced,0.8583869371598218,0.8574749924282894,0.8623726873240581

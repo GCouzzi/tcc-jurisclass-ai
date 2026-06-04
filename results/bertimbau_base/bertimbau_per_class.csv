@@ -1,0 +1,6 @@
+Classe,Precisão,Recall,F1-Score,Suporte
+acordao_de_2_instancia,0.7935,0.9853,0.8791,273
+agravo_em_recurso_extraordinario,0.7956,0.8203,0.8077,1831
+despacho_de_admissibilidade,0.9176,0.8434,0.8789,198
+peticao_do_RE,0.9448,0.9283,0.9365,6328
+sentenca,0.9344,0.9369,0.9357,1475

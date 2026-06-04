@@ -1,0 +1,2 @@
+modelo,tfidf_max_features,tfidf_ngram_range,svm_C,class_weight,accuracy_test,f1_macro_test,f1_weighted_test
+TF-IDF + SVM (LinearSVC),50000,"(1, 2)",1.0,balanced,0.8888668975754577,0.884884089680213,0.8868449787371702

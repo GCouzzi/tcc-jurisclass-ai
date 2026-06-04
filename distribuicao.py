@@ -1,34 +1,44 @@
 import pandas as pd
 
-df_train = pd.read_csv("dataset_victor/train_small.csv")
-df_val   = pd.read_csv("dataset_victor/validation_small.csv")
-df_test  = pd.read_csv("dataset_victor/test_small.csv")
+# ─── CARREGAR DATASETS ──────────────────────────────────────────────────────
+# Dataset original (SVic)
+orig_train = pd.read_csv("dataset_victor/train_small.csv")
+orig_val   = pd.read_csv("dataset_victor/validation_small.csv")
+orig_test  = pd.read_csv("dataset_victor/test_small.csv")
 
-# Removendo a classe 'outros' conforme metodologia
-df_train = df_train[df_train["document_type"] != "outros"]
-df_val   = df_val[df_val["document_type"] != "outros"]
-df_test  = df_test[df_test["document_type"] != "outros"]
+# Dataset limpo (pós pré-processamento)
+clean_train = pd.read_csv("train_clean.csv")
+clean_val   = pd.read_csv("val_clean.csv")
+clean_test  = pd.read_csv("test_clean.csv")
 
-splits = {"Treino": df_train, "Validação": df_val, "Teste": df_test}
 
-# ─── DISTRIBUIÇÃO POR THEME ──────────────────────────────────────────────────
-print("=" * 60)
-print("DISTRIBUIÇÃO POR THEME (sem 'outros')")
-print("=" * 60)
-
-for nome, df in splits.items():
-    print(f"\n--- {nome} ({len(df)} registros) ---")
-    counts = df["themes"].value_counts()
-    pcts   = df["themes"].value_counts(normalize=True).mul(100).round(1)
-    print(pd.DataFrame({"n": counts, "%": pcts}).to_string())
-
-# ─── DISTRIBUIÇÃO POR DOCUMENT_TYPE ─────────────────────────────────────────
-print("\n" + "=" * 60)
-print("DISTRIBUIÇÃO POR DOCUMENT_TYPE (sem 'outros')")
-print("=" * 60)
-
-for nome, df in splits.items():
+def print_dist(nome, df):
     print(f"\n--- {nome} ({len(df)} registros) ---")
     counts = df["document_type"].value_counts()
     pcts   = df["document_type"].value_counts(normalize=True).mul(100).round(1)
     print(pd.DataFrame({"n": counts, "%": pcts}).to_string())
+
+
+# ─── DATASET ORIGINAL (TODAS AS CLASSES) ────────────────────────────────────
+print("=" * 60)
+print("DATASET ORIGINAL — TODAS AS CLASSES")
+print("=" * 60)
+
+for nome, df in [("Treino", orig_train), ("Validação", orig_val), ("Teste", orig_test)]:
+    print_dist(nome, df)
+
+# ─── DATASET ORIGINAL (SEM 'OUTROS') ───────────────────────────────────────
+print("\n" + "=" * 60)
+print("DATASET ORIGINAL — SEM CLASSE 'OUTROS'")
+print("=" * 60)
+
+for nome, df in [("Treino", orig_train), ("Validação", orig_val), ("Teste", orig_test)]:
+    print_dist(nome, df[df["document_type"] != "outros"])
+
+# ─── DATASET LIMPO (PÓS PRÉ-PROCESSAMENTO) ─────────────────────────────────
+print("\n" + "=" * 60)
+print("DATASET LIMPO (PÓS PRÉ-PROCESSAMENTO)")
+print("=" * 60)
+
+for nome, df in [("Treino", clean_train), ("Validação", clean_val), ("Teste", clean_test)]:
+    print_dist(nome, df)

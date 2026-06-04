@@ -23,6 +23,19 @@ def clean_text(text: str) -> str:
 for df in [df_train, df_val, df_test]:
     df["body"] = df["body"].apply(clean_text)
 
+MIN_CHARS = 50
+for name, df in [("treino", df_train), ("validação", df_val), ("teste", df_test)]:
+    antes = len(df)
+    mask = df["body"].str.len() >= MIN_CHARS
+    if name == "treino":
+        df_train = df[mask].copy()
+    elif name == "validação":
+        df_val = df[mask].copy()
+    else:
+        df_test = df[mask].copy()
+    removidos = antes - mask.sum()
+    print(f"  {name}: {removidos} registros removidos (< {MIN_CHARS} chars) | {antes} → {mask.sum()}")
+
 classes = np.array(sorted(df_train["document_type"].unique()))
 weights = compute_class_weight(
     class_weight='balanced',

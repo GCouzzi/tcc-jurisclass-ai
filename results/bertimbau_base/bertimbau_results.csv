@@ -1,0 +1,2 @@
+modelo,epochs,batch_size,learning_rate,accuracy_test,f1_macro_test,f1_weighted_test
+BERTimbau Base,3,16,5e-5,0.9098466105888174,0.8875850997791044,0.9103516796852983
