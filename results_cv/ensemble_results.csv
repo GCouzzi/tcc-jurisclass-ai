@@ -1,0 +1,2 @@
+modelo,accuracy_test,precision_macro_test,recall_macro_test,f1_macro_test,f1_weighted_test
+Ensemble (Soft Voting),0.9266699653636813,0.9083931586281994,0.9183499952705265,0.9129414955587084,0.9269056587567555
