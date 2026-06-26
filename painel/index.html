@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JurisClass AI</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+</head>
+<body>
+  <header class="top-bar">
+    <div class="top-bar-inner">
+      <div class="top-bar-brand">
+        <span class="brand-name">JurisClass AI</span>
+        <span class="brand-version">v1.0</span>
+      </div>
+      <nav class="top-bar-nav">
+        <a href="https://github.com/GCouzzi/implementacao-tcc-testes" rel="noopener"
+           class="nav-link" aria-label="Repositório no GitHub">
+          <i class="fab fa-github" aria-hidden="true"></i> GitHub
+        </a>
+      </nav>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="hero-inner">
+      <h1 class="hero-title">Classificação automática de documentos jurídicos</h1>
+      <p class="hero-subtitle">
+        Envie uma peça processual em PDF ou cole o texto diretamente.<br>
+        O <strong>JurisClass AI</strong> identifica o tipo documental e retorna
+        o grau de confiança da predição em segundos.
+      </p>
+    </div>
+  </section>
+
+  <main class="main">
+
+    <section class="card" aria-labelledby="input-heading">
+      <h2 id="input-heading" class="section-label">Entrada do documento</h2>
+
+      <div class="tabs" role="tablist">
+        <button class="tab active" id="tab-upload-btn" role="tab"
+                aria-selected="true" aria-controls="upload-panel"
+                onclick="switchTab('upload')">
+          <i class="fa-solid fa-cloud-arrow-up" aria-hidden="true"></i> Enviar PDF
+        </button>
+        <button class="tab" id="tab-text-btn" role="tab"
+                aria-selected="false" aria-controls="text-panel"
+                onclick="switchTab('text')">
+          <i class="fa-solid fa-align-left" aria-hidden="true"></i> Colar texto
+        </button>
+      </div>
+
+      <div id="upload-panel" role="tabpanel" aria-labelledby="tab-upload-btn">
+        <div class="upload-zone" id="drop-zone"
+             onclick="document.getElementById('file-input').click()"
+             ondragover="handleDragOver(event)"
+             ondragleave="handleDragLeave(event)"
+             ondrop="handleDrop(event)"
+             tabindex="0"
+             onkeydown="if(event.key==='Enter'||event.key===' ')document.getElementById('file-input').click()"
+             aria-label="Área para enviar PDF. Clique ou arraste o arquivo.">
+          <div class="upload-icon" aria-hidden="true">
+            <i class="fa-solid fa-cloud-arrow-up fa-2x"></i>
+          </div>
+          <p class="upload-text">Arraste um PDF ou clique para selecionar</p>
+          <p class="upload-hint">Apenas arquivos .pdf · máx. 20 MB</p>
+        </div>
+        <div id="file-tag" class="file-tag" style="display:none" aria-live="polite">
+          <i class="fa-solid fa-file-pdf" aria-hidden="true"></i>
+          <span id="file-tag-name">documento.pdf</span>
+          <button class="file-tag-remove" onclick="removeFile()" aria-label="Remover arquivo">
+            <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+          </button>
+        </div>
+        <input type="file" id="file-input" accept=".pdf"
+               style="display:none" onchange="handleFile(this)" />
+      </div>
+
+      <div id="text-panel" role="tabpanel" aria-labelledby="tab-text-btn" style="display:none">
+        <textarea id="text-input"
+                  placeholder="Cole aqui o conteúdo textual da peça processual…"
+                  aria-label="Texto do documento jurídico"
+                  oninput="updateCount()"></textarea>
+        <div class="char-count" aria-live="polite">
+          <span id="char-count">0</span> caracteres
+          <span id="char-warn" class="char-warn" style="display:none">
+            · mínimo de 50 caracteres para classificação
+          </span>
+        </div>
+      </div>
+
+      <button class="btn-classify" id="classify-btn" onclick="classify()">
+        <i class="fa-solid fa-brain" aria-hidden="true"></i> Classificar documento
+      </button>
+    </section>
+
+    <section class="result-card" id="result-section" style="display:none"
+             aria-labelledby="result-heading" aria-live="polite">
+
+      <div class="result-header">
+        <h2 id="result-heading" class="section-label">
+          Resultado da classificação
+        </h2>
+        <span class="status-badge">
+          <i class="fa-solid fa-circle-check" aria-hidden="true"></i> Concluído
+        </span>
+      </div>
+
+      <div class="result-body">
+        <div class="result-type-wrap">
+          <p class="result-type-label">Tipo documental</p>
+          <p class="result-type-name" id="result-label">—</p>
+          <p class="result-type-desc" id="result-desc">—</p>
+        </div>
+
+        <div class="confidence-block">
+          <div class="confidence-header">
+            <span class="confidence-title">Grau de confiança</span>
+            <span class="confidence-pct" id="conf-pct">—</span>
+          </div>
+          <div class="confidence-bar-bg" role="progressbar"
+               aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"
+               aria-label="Grau de confiança da classificação" id="conf-bar-wrap">
+            <div class="confidence-bar-fill" id="conf-bar"></div>
+          </div>
+        </div>
+
+        <div class="all-scores">
+          <p class="all-scores-title">Distribuição por classe</p>
+          <div id="scores-list"></div>
+        </div>
+      </div>
+
+      <div class="result-footer">
+        <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+        Classificação gerada pelo JurisClass AI. Revise o resultado antes de utilizá-lo em fluxos críticos.
+      </div>
+
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-credits">
+        Desenvolvido por <span class="name">Gabriel de Salles Mapeli Couzzi</span>
+        <a href="https://github.com/GCouzzi" rel="noopener">
+          <i class="fab fa-github" aria-hidden="true"></i>
+        </a>
+        <a href="https://www.linkedin.com/in/gabrielcouzzi/" rel="noopener"
+           aria-label="LinkedIn de Gabriel de Salles Mapeli Couzzi"
+           style="color:rgba(255,255,255,0.45); margin-left:4px; vertical-align:middle; transition:color 0.15s;"
+           onmouseover="this.style.color='#0A66C2'" onmouseout="this.style.color='rgba(255,255,255,0.45)'">
+          <i class="fab fa-linkedin" aria-hidden="true"></i>
+        </a>
+        · Trabalho de Conclusão de Curso — Sistemas de Informação, IFES Campus Cachoeiro de Itapemirim, 2026
+      </div>
+      <div class="footer-links">
+        <a href="https://github.com/GCouzzi/implementacao-tcc-testes" rel="noopener">
+          <i class="fab fa-github" aria-hidden="true"></i> Repositório do projeto
+        </a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
