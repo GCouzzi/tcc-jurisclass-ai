@@ -17,11 +17,11 @@ def main():
 
     # 1. Carregar dados
     print("\n[1/6] Carregando dados...")
-    df_train = pd.read_csv("train_clean.csv")
-    df_val   = pd.read_csv("val_clean.csv")
-    df_test  = pd.read_csv("test_clean.csv")
+    df_train = pd.read_csv("dataset_clean/train_clean.csv")
+    df_val   = pd.read_csv("dataset_clean/val_clean.csv")
+    df_test  = pd.read_csv("dataset_clean/test_clean.csv")
 
-    with open("class_weights.json", "r") as f:
+    with open("results/class_weights.json", "r") as f:
         class_weights_dict = json.load(f)
 
     # Label mapping

@@ -44,8 +44,8 @@ def compute_metrics(p: EvalPrediction):
 def main():
     # 1. Carregar mapeamento de classes e pesos
     print("Carregando dados...")
-    df_train = pd.read_csv("train_clean.csv")
-    df_val = pd.read_csv("val_clean.csv")
+    df_train = pd.read_csv("dataset_clean/train_clean.csv")
+    df_val = pd.read_csv("dataset_clean/val_clean.csv")
 
     if DRY_RUN:
         df_train = df_train.head(100)
@@ -61,7 +61,7 @@ def main():
         print(f"Amostra estratificada: {len(df_train)} textos de treino (de {GRID_SEARCH_SAMPLE} solicitados)")
         print(f"Distribuição por classe:\n{df_train['document_type'].value_counts()}\n")
 
-    with open("class_weights.json", "r") as f:
+    with open("results/class_weights.json", "r") as f:
         class_weights_dict = json.load(f)
 
     # Criar label2id e id2label consistentes
@@ -188,12 +188,12 @@ def main():
     # 5. Salvar resultados
     df_results = pd.DataFrame(results)
     df_results = df_results.sort_values(by="val_f1_macro", ascending=False)
-    df_results.to_csv("grid_search_results.csv", index=False)
+    df_results.to_csv("results/grid_search_results.csv", index=False)
 
     print("\n=== GRID SEARCH FINALIZADO ===")
     print("Melhor configuração encontrada:")
     print(df_results.iloc[0])
-    print("\nOs resultados completos foram salvos em 'grid_search_results.csv'.")
+    print("\nOs resultados completos foram salvos em 'results/grid_search_results.csv'.")
 
 
 # OBRIGATÓRIO no Windows para evitar erro de multiprocessing/fork

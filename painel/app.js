@@ -1,5 +1,7 @@
 "use strict";
 
+const API_BASE = "http://127.0.0.1:8000";
+
 const DOC_CLASSES = [
   {
     name: "Acórdão",
@@ -149,60 +151,54 @@ function classify() {
   setLoadingState(btn, true);
   hideResult();
 
-  /* ── Integração real com o backend FastAPI ──────────────────────────────
-     Descomente e adapte quando o backend estiver disponível:
+  const formData = new FormData();
 
-     const formData = new FormData();
+  if (activeTab === "upload") {
+    formData.append("file", selectedFile);
+  } else {
+    formData.append("text", document.getElementById("text-input").value.trim());
+  }
 
-     if (activeTab === "upload") {
-       formData.append("file", selectedFile);
-     } else {
-       formData.append("text", document.getElementById("text-input").value.trim());
-     }
-
-     fetch("/classify", { method: "POST", body: formData })
-       .then(res => {
-         if (!res.ok) throw new Error("Erro na requisição: " + res.status);
-         return res.json();
-       })
-       .then(data => {
-         renderResult(data.label, data.confidence, data.scores);
-         setLoadingState(btn, false);
-       })
-       .catch(err => {
-         showError("Não foi possível conectar ao servidor. Tente novamente.");
-         setLoadingState(btn, false);
-       });
-
-     Formato esperado da resposta JSON:
-     {
-       "label":      "Acórdão",
-       "confidence": 0.94,
-       "scores": [
-         { "name": "Acórdão",              "score": 0.94 },
-         { "name": "Recurso Extraordinário","score": 0.03 },
-         { "name": "Agravo (ARE)",         "score": 0.01 },
-         { "name": "Despacho",             "score": 0.01 },
-         { "name": "Sentença",             "score": 0.01 }
-       ]
-     }
-  ─────────────────────────────────────────────────────────────────────── */
-
-  /* ── Simulação (remover quando integrar o backend) ─────────────────────*/
-  setTimeout(() => {
-    const data = simulateClassification();
-    renderResult(data.label, data.confidence, data.scores);
-    setLoadingState(btn, false);
-  }, 1800);
+  fetch(`${API_BASE}/classify`, { method: "POST", body: formData })
+    .then(res => {
+      if (!res.ok) {
+        return res.json().then(err => {
+          throw new Error(err.detail || "Erro na requisição: " + res.status);
+        });
+      }
+      return res.json();
+    })
+    .then(data => {
+      renderResult(data.label, data.confidence, data.scores, data.extraction_method);
+      setLoadingState(btn, false);
+    })
+    .catch(err => {
+      showError(err.message || "Não foi possível conectar ao servidor. Tente novamente.");
+      setLoadingState(btn, false);
+    });
 }
 
-function renderResult(label, confidence, scores) {
+const EXTRACTION_LABELS = {
+  pymupdf: "PDF Digital",
+  ocr: "OCR (Tesseract)",
+  text_input: "Texto direto",
+  pymupdf_insufficient: "PDF (texto parcial)",
+};
+
+function renderResult(label, confidence, scores, extractionMethod) {
   const docClass = DOC_CLASSES.find(c => c.name === label) || DOC_CLASSES[0];
   const pct      = Math.round(confidence * 100);
 
   document.getElementById("result-label").textContent = docClass.name;
   document.getElementById("result-desc").textContent  = docClass.desc;
   document.getElementById("conf-pct").textContent     = pct + "%";
+
+  // Mostrar método de extração
+  const methodEl = document.getElementById("extraction-method");
+  if (methodEl && extractionMethod) {
+    methodEl.textContent = EXTRACTION_LABELS[extractionMethod] || extractionMethod;
+    methodEl.style.display = "inline-flex";
+  }
 
   const confBar = document.getElementById("conf-bar");
   confBar.style.width = "0%";
@@ -298,31 +294,4 @@ function showError(message) {
 
   setTimeout(() => { if (el.parentNode) el.remove(); }, 5000);
 }
-
-/* ── Simulação de resposta da API ────────────────────────────────────────
-   Remover ao integrar o backend.
-   ──────────────────────────────────────────────────────────────────────── */
-
-function simulateClassification() {
-  const topIdx   = Math.floor(Math.random() * DOC_CLASSES.length);
-  const topScore = 0.65 + Math.random() * 0.32;
-  const rest     = 1 - topScore;
-
-  const rawOthers = DOC_CLASSES.map((_, i) =>
-    i === topIdx ? 0 : Math.random()
-  );
-  const sumOthers = rawOthers.reduce((a, b) => a + b, 0);
-
-  const scores = DOC_CLASSES.map((cls, i) => ({
-    name:  cls.name,
-    score: i === topIdx
-      ? topScore
-      : (rawOthers[i] / sumOthers) * rest,
-  }));
-
-  return {
-    label:      DOC_CLASSES[topIdx].name,
-    confidence: topScore,
-    scores,
-  };
-}
+

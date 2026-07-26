@@ -30,7 +30,7 @@ from sklearn.model_selection import StratifiedKFold
 DRY_RUN = False  # True = amostra pequena para validar o pipeline
 MODEL_NAME = "raquelsilveira/legalbertpt_fp"
 # Treino sempre no disco local rápido — sem I/O lento pro Drive durante o treino.
-OUTPUT_DIR = "/content/results_cv" if os.path.isdir("/content") else "./results_cv"
+OUTPUT_DIR = "/content/results/results_cv" if os.path.isdir("/content") else "./results/results_cv"
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 # Backup pro Drive só no final de cada fold (evita erros de I/O sob carga de GPU).
@@ -51,7 +51,7 @@ BEST_WARMUP = 500
 # Cross-Validation
 N_SPLITS = 5
 RANDOM_STATE = 42
-START_FROM_FOLD = 2  # Mude para retomar de um fold específico (ex: 3 = pula folds 1 e 2 já concluídos)
+START_FROM_FOLD = 1  # Mude para retomar de um fold específico (ex: 3 = pula folds 1 e 2 já concluídos)
 
 # ==============================================================================
 # DATASET
@@ -177,14 +177,14 @@ def main():
     # 1. CARREGAR DADOS
     # =========================================================================
     print("[1/7] Carregando dados...")
-    df_train_full = pd.read_csv("train_clean.csv")
-    df_test = pd.read_csv("test_clean.csv")
+    df_train_full = pd.read_csv("dataset_clean/train_clean.csv")
+    df_test = pd.read_csv("dataset_clean/test_clean.csv")
 
     if DRY_RUN:
         df_train_full = df_train_full.head(200)
         df_test = df_test.head(100)
 
-    with open("class_weights.json", "r") as f:
+    with open("results/class_weights.json", "r") as f:
         class_weights_dict = json.load(f)
 
     classes = sorted(list(class_weights_dict.keys()))

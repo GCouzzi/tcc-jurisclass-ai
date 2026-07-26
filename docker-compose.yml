@@ -1,0 +1,24 @@
+services:
+  backend:
+    build: ./backend
+    container_name: jurisclass-backend
+    ports:
+      - "8000:8000"
+    volumes:
+      # Modelos treinados (read-only) — mapeia os folds do cross-validation
+      - ./results/results_cv:/models:ro
+      # Pesos das classes (read-only)
+      - ./results/class_weights.json:/app/class_weights.json:ro
+    environment:
+      - MODEL_DIR=/models
+      - USE_ENSEMBLE=true
+      - FALLBACK_FOLD=5
+      - CORS_ORIGINS=*
+    restart: unless-stopped
+
+  frontend:
+    build: ./painel
+    container_name: jurisclass-frontend
+    ports:
+      - "5500:80"
+    restart: unless-stopped

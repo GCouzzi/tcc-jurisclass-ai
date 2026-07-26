@@ -48,12 +48,12 @@ print("\n=== CLASS WEIGHTS ===")
 for cls, w in sorted(class_weight_dict.items(), key=lambda x: -x[1]):
     print(f"  {cls:45s} {w:.4f}")
 
-df_train.to_csv("train_clean.csv", index=False)
-df_val.to_csv("val_clean.csv",     index=False)
-df_test.to_csv("test_clean.csv",   index=False)
+df_train.to_csv("dataset_clean/train_clean.csv", index=False)
+df_val.to_csv("dataset_clean/val_clean.csv",     index=False)
+df_test.to_csv("dataset_clean/test_clean.csv",   index=False)
 
 import json
-with open("class_weights.json", "w") as f:
+with open("results/class_weights.json", "w") as f:
     json.dump(class_weight_dict, f, indent=2)
 
 print("\nArquivos salvos.")

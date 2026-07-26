@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.env
+.venv
+env/
+venv/
+ENV/
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+
+# Datasets
+dataset_victor/
+dataset_clean/
+
+# Models and Checkpoints (Large Files)
+# *.safetensors (Comentado para permitir subir o 5º fold via LFS)
+# *.bin
+# *.pt
+checkpoint-*/
+
+# OS
+.DS_Store
+Thumbs.db

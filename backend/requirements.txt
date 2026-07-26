@@ -1,0 +1,10 @@
+fastapi
+uvicorn[standard]
+python-multipart
+PyMuPDF
+pytesseract
+pdf2image
+Pillow
+torch
+transformers
+numpy
