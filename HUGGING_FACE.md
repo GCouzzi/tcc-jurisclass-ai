@@ -8,4 +8,4 @@ Execute `python teste_others.py` para comparar o fold 5 e o ensemble. Use `pytho
 
 O Hub armazena e versiona os pesos; a inferência continua sendo executada pela máquina que roda Python. Para hospedá-la no Hugging Face, implante a API em um Space ou Inference Endpoint. O ensemble requer o mesmo fluxo do painel: cinco folds, média das probabilidades e limiar específico do ensemble.
 
-O painel usa o Hub por padrão. As variáveis relevantes são `HF_MODEL_REPO`, `HF_MODEL_REVISION`, `USE_ENSEMBLE`, `FALLBACK_FOLD` e `CONFIDENCE_THRESHOLD`. Deixe `HF_MODEL_REPO` vazio para usar `MODEL_DIR`.
+O painel usa o Hub por padrão. As variáveis relevantes são `HF_MODEL_REPO`, `HF_MODEL_REVISION`, `USE_ENSEMBLE`, `FALLBACK_FOLD` e `CONFIDENCE_THRESHOLD`. Deixe `HF_MODEL_REPO` vazio para usar `MODEL_DIR`. O limiar é opcional: sem `CONFIDENCE_THRESHOLD`, a classificação de maior pontuação é retornada normalmente; com a variável definida, entradas abaixo dela são encaminhadas à revisão manual.

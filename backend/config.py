@@ -12,7 +12,7 @@ MODEL_DIR = os.getenv("MODEL_DIR", os.path.join(os.path.dirname(__file__), "..",
 USE_ENSEMBLE = os.getenv("USE_ENSEMBLE", "true").lower() == "true"
 FALLBACK_FOLD = int(os.getenv("FALLBACK_FOLD", "5"))
 
-# Limiar escolhido experimentalmente; ausente => revisão manual.
+# Limiar escolhido experimentalmente; ausente => classificação normal, sem abstenção.
 _threshold = os.getenv("CONFIDENCE_THRESHOLD", "").strip()
 CONFIDENCE_THRESHOLD = validate_threshold(_threshold) if _threshold else None
 

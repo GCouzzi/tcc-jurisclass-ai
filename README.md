@@ -239,3 +239,15 @@ O backend usa os modelos treinados para inferência e não lê diretamente os CS
 Execute `python teste_others.py`. O script compara o melhor fold (fold 5) com o ensemble dos cinco folds, escolhe um limiar próprio para cada configuração usando somente a validação e grava um único arquivo: `results/rejection/resultado_others.json`. Por padrão, usa 2.129 páginas Others e 2.129 conhecidas em cada partição.
 
 Os pesos são baixados do repositório público https://huggingface.co/gcouzzi/jurisclass-legalbertpt na revisão fixa registrada no código. Para usar os pesos locais, acrescente `--local-models`.
+
+### Ativar a revisão por limiar no painel
+
+Depois de executar `teste_others.py`, use o limiar selecionado para a mesma configuração do painel. Com o ensemble padrão (`USE_ENSEMBLE=true`), crie um arquivo `.env` ao lado de `docker-compose.yml`:
+
+```env
+CONFIDENCE_THRESHOLD=0.98765
+```
+
+Use ponto como separador decimal e substitua o exemplo pelo valor de `configurations.ensemble_5_folds.validation.selected_threshold.threshold` no JSON. Reinicie os serviços com `docker compose up -d --build`. Para o fold 5 individual, configure também `USE_ENSEMBLE=false` e use o limiar de `configurations.best_fold_5`.
+
+Se `CONFIDENCE_THRESHOLD` estiver ausente ou vazio, o mecanismo de revisão fica desativado: o painel retorna normalmente a classe de maior pontuação. Quando a variável estiver definida, pontuações abaixo do limiar retornam `Não classificado` e `Revisão manual necessária`; pontuações iguais ou superiores continuam classificadas.

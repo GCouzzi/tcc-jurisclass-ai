@@ -23,7 +23,7 @@ def classification_decision(probabilities, labels, threshold=None):
         raise ValueError("As probabilidades devem somar 1.")
     index = max(range(len(probabilities)), key=probabilities.__getitem__)
     confidence = probabilities[index]
-    review = threshold is None or confidence < threshold
+    review = threshold is not None and confidence < threshold
     return {
         "label": "Não classificado" if review else labels[index],
         "suggested_label": labels[index],
@@ -31,6 +31,6 @@ def classification_decision(probabilities, labels, threshold=None):
         "requires_review": review,
         "status": "manual_review" if review else "classified",
         "threshold": threshold,
-        "message": ("Revisão manual necessária: limiar ainda não definido" if threshold is None
+        "message": ("Classificação automática sem limiar de revisão" if threshold is None
                     else "Revisão manual necessária" if review else "Classificação automática"),
     }
