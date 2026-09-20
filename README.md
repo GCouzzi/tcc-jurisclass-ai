@@ -90,10 +90,9 @@ A maneira mais fácil e segura de rodar a aplicação completa é utilizando o D
 │   └── results_cv/            # Onde os modelos (Folds 1 a 5) devem ficar salvos
 ├── cross_validation.py        # Script de Fine-tuning (Stratified 5-Fold)
 ├── grid_search.py             # Busca manual de hiperparâmetros com Hugging Face Trainer
-├── grid_search_colab.ipynb    # Versão do Grid Search preparada para Google Colab
 ├── pre_processamento.py       # Limpeza e balanceamento do dataset
 ├── docker-compose.yml         # Orquestração do Backend e Frontend
-└── .gitattributes             # Configuração LFS para os arquivos de tensor
+└── .gitattributes             # Regras de atributos do Git
 ```
 
 ---
@@ -177,7 +176,14 @@ python grid_search.py
 
 O script treina com `train_clean.csv`, avalia cada combinação com `val_clean.csv` e salva o ranking em `results/grid_search_results.csv`. O conjunto de teste não participa da busca de hiperparâmetros.
 
-Também existe o notebook `grid_search_colab.ipynb`. Nesse caso, faça upload de `train_clean.csv`, `val_clean.csv` e `class_weights.json` quando solicitado.
+No Google Colab, ative uma GPU, copie o projeto e execute:
+
+```python
+!pip install -q transformers accelerate pandas scikit-learn
+!python grid_search.py --overwrite
+```
+
+O script localiza os arquivos tanto nas pastas do projeto quanto diretamente em `/content`. Também é possível informar `--train`, `--validation` e `--class-weights`.
 
 > O resultado do Grid Search não é carregado automaticamente por `cross_validation.py`. Se uma configuração diferente for escolhida, atualize manualmente as constantes `BEST_EPOCHS`, `BEST_BATCH_SIZE`, `BEST_LR` e `BEST_WARMUP` no início do script.
 
@@ -197,7 +203,6 @@ Os modelos e relatórios são salvos em `results/results_cv/`. Para retomar uma 
 |---|---|---|---|
 | `pre_processamento.py` | Limpa `train_small.csv`, gera `train_clean.csv` e calcula os pesos das classes. | Limpa `validation_small.csv` e gera `val_clean.csv`. | Limpa `test_small.csv` e gera `test_clean.csv`. |
 | `grid_search.py` | Treina cada combinação; por padrão usa uma amostra estratificada de até 3.000 textos. | Calcula as métricas usadas para ordenar as combinações. | Não utiliza. |
-| `grid_search_colab.ipynb` | Mesmo papel do Grid Search local, após upload de `train_clean.csv`. | Avalia as combinações após upload de `val_clean.csv`. | Não utiliza. |
 | `cross_validation.py` | Origina os cinco folds de treino e validação. | Não utiliza `val_clean.csv`; a validação vem dos folds do conjunto de treino. | Avalia o melhor fold e o ensemble somente após o treinamento. |
 | `baseline_bertimbau.py` | Ajusta o modelo Bertimbau. | Avalia a cada época e seleciona o melhor checkpoint pelo F1 macro. | Produz as métricas e a matriz de confusão finais. |
 | `baseline_legalbert_default.py` | Ajusta o LegalBERT com a configuração padrão. | Avalia a cada época e seleciona o melhor checkpoint pelo F1 macro. | Produz as métricas e a matriz de confusão finais. |
