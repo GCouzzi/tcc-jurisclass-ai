@@ -11,7 +11,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI, File, Form, UploadFile, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
-from config import CORS_ORIGINS, MIN_TEXT_LENGTH, MAX_FILE_SIZE_MB
+from config import CORS_ORIGINS, MIN_TEXT_LENGTH, MAX_FILE_SIZE_MB, CONFIDENCE_THRESHOLD
 from preprocessing import clean_text
 from ocr import extract_text_from_pdf
 from classifier import classifier
@@ -71,6 +71,7 @@ async def health():
         "model_mode": classifier.mode,
         "models_loaded": len(classifier.models),
         "device": str(classifier.device),
+        "confidence_threshold": CONFIDENCE_THRESHOLD,
     }
 
 

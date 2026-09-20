@@ -8,3 +8,5 @@ Pillow
 torch
 transformers
 numpy
+
+huggingface_hub

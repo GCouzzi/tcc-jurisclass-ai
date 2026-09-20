@@ -16,11 +16,9 @@ ENV/
 dataset_victor/
 dataset_clean/
 
-# Models and Checkpoints (Large Files)
-# *.safetensors (Comentado para permitir subir o 5º fold via LFS)
-# *.bin
-# *.pt
+# Models and checkpoints
 checkpoint-*/
+results/results_cv/fold_*/best_model/
 
 # OS
 .DS_Store

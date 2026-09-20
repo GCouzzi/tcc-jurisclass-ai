@@ -4,14 +4,20 @@ Valores configuráveis via variáveis de ambiente.
 """
 
 import os
+from decision import validate_threshold
+from model_source import DEFAULT_REPO_ID, DEFAULT_REVISION
 
 # ─── Paths dos Modelos ────────────────────────────────────────────────────────
 MODEL_DIR = os.getenv("MODEL_DIR", os.path.join(os.path.dirname(__file__), "..", "results/results_cv"))
 USE_ENSEMBLE = os.getenv("USE_ENSEMBLE", "true").lower() == "true"
 FALLBACK_FOLD = int(os.getenv("FALLBACK_FOLD", "5"))
 
-# ─── Modelo base HuggingFace (usado apenas se nenhum modelo local encontrado) ─
-HF_MODEL_NAME = "raquelsilveira/legalbertpt_fp"
+# Limiar escolhido experimentalmente; ausente => revisão manual.
+_threshold = os.getenv("CONFIDENCE_THRESHOLD", "").strip()
+CONFIDENCE_THRESHOLD = validate_threshold(_threshold) if _threshold else None
+
+HF_MODEL_REPO = os.getenv("HF_MODEL_REPO", DEFAULT_REPO_ID).strip() or None
+HF_MODEL_REVISION = os.getenv("HF_MODEL_REVISION", DEFAULT_REVISION).strip() or None
 
 # ─── Extração de texto ────────────────────────────────────────────────────────
 MIN_TEXT_LENGTH = 50

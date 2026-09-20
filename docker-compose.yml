@@ -7,10 +7,15 @@ services:
     volumes:
       - ./results/results_cv:/models:ro
       - ./results/class_weights.json:/app/class_weights.json:ro
+      - hf-model-cache:/root/.cache/huggingface
     environment:
       - MODEL_DIR=/models
       - USE_ENSEMBLE=true
       - FALLBACK_FOLD=5
+      - CONFIDENCE_THRESHOLD=${CONFIDENCE_THRESHOLD:-}
+      - HF_MODEL_REPO=${HF_MODEL_REPO-gcouzzi/jurisclass-legalbertpt}
+      - HF_MODEL_REVISION=${HF_MODEL_REVISION:-f1b1130e7d7dd59c286c4928a5ca90b893528ed4}
+      - HF_TOKEN
       - CORS_ORIGINS=*
     restart: unless-stopped
 
@@ -20,3 +25,6 @@ services:
     ports:
       - "5500:80"
     restart: unless-stopped
+
+volumes:
+  hf-model-cache:

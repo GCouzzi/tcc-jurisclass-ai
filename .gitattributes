@@ -1,1 +1,2 @@
-*.safetensors filter=lfs diff=lfs merge=lfs -text
+*.js whitespace=cr-at-eol
+# Model weights are distributed through the Hugging Face Hub.

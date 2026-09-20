@@ -206,7 +206,7 @@ Os modelos e relatórios são salvos em `results/results_cv/`. Para retomar uma 
 
 ### 6. Execute a aplicação com Docker
 
-Depois que `results/class_weights.json` e os modelos `results/results_cv/fold_1` até `fold_5` estiverem disponíveis, execute:
+Depois que `results/class_weights.json` estiver disponível, execute. Os modelos serão obtidos do Hugging Face Hub na inicialização:
 
 ```bash
 docker compose up -d --build
@@ -223,8 +223,14 @@ O backend usa os modelos treinados para inferência e não lê diretamente os CS
 - **Modelos & IA:** PyTorch, HuggingFace Transformers, Scikit-learn
 - **Backend:** FastAPI, Uvicorn, Tesseract OCR (Pytesseract), PyMuPDF (fitz)
 - **Frontend:** Vanilla JS, HTML5, CSS3 Moderno
-- **Infraestrutura:** Docker, Docker Compose, Git LFS
+- **Infraestrutura:** Docker, Docker Compose, Hugging Face Hub
 - **Análise de Dados:** Pandas, Numpy, Seaborn, Matplotlib
 
 ---
 *Projeto acadêmico.*
+
+## Teste com documentos Others
+
+Execute `python teste_others.py`. O script compara o melhor fold (fold 5) com o ensemble dos cinco folds, escolhe um limiar próprio para cada configuração usando somente a validação e grava um único arquivo: `results/rejection/resultado_others.json`. Por padrão, usa 2.129 páginas Others e 2.129 conhecidas em cada partição.
+
+Os pesos são baixados do repositório público https://huggingface.co/gcouzzi/jurisclass-legalbertpt na revisão fixa registrada no código. Para usar os pesos locais, acrescente `--local-models`.

@@ -169,7 +169,7 @@ function classify() {
       return res.json();
     })
     .then(data => {
-      renderResult(data.label, data.confidence, data.scores, data.extraction_method);
+      renderResult(data.label, data.confidence, data.scores, data.extraction_method, data.requires_review);
       setLoadingState(btn, false);
     })
     .catch(err => {
@@ -185,12 +185,15 @@ const EXTRACTION_LABELS = {
   pymupdf_insufficient: "PDF (texto parcial)",
 };
 
-function renderResult(label, confidence, scores, extractionMethod) {
-  const docClass = DOC_CLASSES.find(c => c.name === label) || DOC_CLASSES[0];
+function renderResult(label, confidence, scores, extractionMethod, requiresReview = false) {
+  const docClass = DOC_CLASSES.find(c => c.name === label);
+  const review = requiresReview || !docClass;
   const pct      = Math.round(confidence * 100);
 
-  document.getElementById("result-label").textContent = docClass.name;
-  document.getElementById("result-desc").textContent  = docClass.desc;
+  document.getElementById("result-label").textContent = review ? "Não classificado" : docClass.name;
+  document.getElementById("result-desc").textContent = review
+    ? "Revisão manual necessária. Confira o documento antes de definir seu tipo documental."
+    : docClass.desc;
   document.getElementById("conf-pct").textContent     = pct + "%";
 
   // Mostrar método de extração
@@ -203,7 +206,7 @@ function renderResult(label, confidence, scores, extractionMethod) {
   const confBar = document.getElementById("conf-bar");
   confBar.style.width = "0%";
   confBar.style.background =
-    confidence >= 0.75 ? "#1D9E75" :
+    review ? "#993C1D" : confidence >= 0.75 ? "#1D9E75" :
     confidence >= 0.50 ? "#BA7517" : "#993C1D";
 
   const confWrap = document.getElementById("conf-bar-wrap");
@@ -221,7 +224,7 @@ function renderResult(label, confidence, scores, extractionMethod) {
     const cls   = DOC_CLASSES.find(c => c.name === s.name) || {};
     const p     = Math.round(s.score * 100);
     const color = cls.color || "#929292";
-    const isTop = s.name === label;
+    const isTop = !review && s.name === label;
 
     const row = document.createElement("div");
     row.className = "score-row";

@@ -5,7 +5,6 @@ Suporta modo single-fold e ensemble (soft voting).
 
 import os
 import logging
-from typing import Optional
 
 import torch
 import numpy as np
@@ -16,9 +15,13 @@ from config import (
     MODEL_DIR,
     USE_ENSEMBLE,
     FALLBACK_FOLD,
-    HF_MODEL_NAME,
+    HF_MODEL_REPO,
+    HF_MODEL_REVISION,
     LABEL_DISPLAY,
+    CONFIDENCE_THRESHOLD,
 )
+from decision import classification_decision
+from model_source import resolve_model_directory
 
 logger = logging.getLogger(__name__)
 
@@ -32,11 +35,15 @@ class DocumentClassifier:
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.id2label: dict = {}
         self.mode: str = "not_loaded"
+        self.model_dir = MODEL_DIR
 
     def load(self) -> None:
         """Carrega modelo(s) na memória. Chamado no startup do FastAPI."""
+        folds = list(range(1, 6)) if USE_ENSEMBLE else [FALLBACK_FOLD]
+        self.model_dir = str(resolve_model_directory(
+            MODEL_DIR, HF_MODEL_REPO, HF_MODEL_REVISION, folds))
         logger.info("Device: %s", self.device)
-        logger.info("MODEL_DIR: %s", MODEL_DIR)
+        logger.info("MODEL_DIR: %s", self.model_dir)
         logger.info("USE_ENSEMBLE: %s | FALLBACK_FOLD: %d", USE_ENSEMBLE, FALLBACK_FOLD)
 
         if USE_ENSEMBLE:
@@ -57,7 +64,7 @@ class DocumentClassifier:
         """Encontra folds que possuem model.safetensors."""
         available = []
         for fold_num in range(1, 6):
-            fold_path = os.path.join(MODEL_DIR, f"fold_{fold_num}", "best_model")
+            fold_path = os.path.join(self.model_dir, f"fold_{fold_num}", "best_model")
             model_file = os.path.join(fold_path, "model.safetensors")
             if os.path.isfile(model_file):
                 available.append(fold_path)
@@ -77,20 +84,19 @@ class DocumentClassifier:
         """Carrega todos os folds disponíveis para ensemble."""
         fold_paths = self._find_available_folds()
 
-        if len(fold_paths) < 2:
-            logger.warning(
-                "Apenas %d fold(s) disponível(is) — insuficiente para ensemble. "
-                "Usando fallback para fold %d.",
-                len(fold_paths), FALLBACK_FOLD
+        if len(fold_paths) != 5:
+            raise RuntimeError(
+                "O ensemble exige os cinco folds usados na avaliação. "
+                "Para modelo individual, configure USE_ENSEMBLE=false."
             )
-            self._load_single_fold()
-            return
 
         # Carrega tokenizer do primeiro fold disponível
         self.tokenizer = AutoTokenizer.from_pretrained(fold_paths[0])
 
         for path in fold_paths:
             model = self._load_model_from_path(path)
+            if self.models and model.config.id2label != self.models[0].config.id2label:
+                raise RuntimeError("Mapeamentos de classes incompatíveis entre folds.")
             self.models.append(model)
             logger.info("  Modelo carregado: %s", path)
 
@@ -99,8 +105,8 @@ class DocumentClassifier:
         self.mode = f"ensemble_{len(self.models)}_folds"
 
     def _load_single_fold(self) -> None:
-        """Carrega apenas o fold especificado (ou fallback HuggingFace)."""
-        fold_path = os.path.join(MODEL_DIR, f"fold_{FALLBACK_FOLD}", "best_model")
+        """Carrega o fold especificado da origem configurada (local ou Hub)."""
+        fold_path = os.path.join(self.model_dir, f"fold_{FALLBACK_FOLD}", "best_model")
         model_file = os.path.join(fold_path, "model.safetensors")
 
         if os.path.isfile(model_file):
@@ -162,10 +168,10 @@ class DocumentClassifier:
         avg_probs = avg_probs[0]  # Remove batch dimension
 
         # Resultado
-        top_idx = int(np.argmax(avg_probs))
-        top_label_internal = self.id2label.get(str(top_idx), self.id2label.get(top_idx))
-        top_label_display = LABEL_DISPLAY.get(top_label_internal, top_label_internal)
-        confidence = float(avg_probs[top_idx])
+        labels = [self.id2label.get(str(i), self.id2label.get(i))
+                  for i in range(len(avg_probs))]
+        display_labels = [LABEL_DISPLAY.get(label, label) for label in labels]
+        decision = classification_decision(avg_probs, display_labels, CONFIDENCE_THRESHOLD)
 
         scores = []
         for i, prob in enumerate(avg_probs):
@@ -180,8 +186,7 @@ class DocumentClassifier:
         scores.sort(key=lambda x: x["score"], reverse=True)
 
         return {
-            "label": top_label_display,
-            "confidence": round(confidence, 4),
+            **decision,
             "scores": scores,
         }
 
