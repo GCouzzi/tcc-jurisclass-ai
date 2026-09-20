@@ -1,0 +1,1896 @@
+{
+  "experiment": {
+    "purpose": "Medir a confiança em Others e determinar limiares sem usar o teste na escolha.",
+    "unit": "page",
+    "configurations": {
+      "best_fold_5": [
+        5
+      ],
+      "ensemble_5_folds": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    "best_fold_basis": "Fold 5 teve o maior F1-macro interno entre os folds.",
+    "repo_id": "gcouzzi/jurisclass-legalbertpt",
+    "revision": "f1b1130e7d7dd59c286c4928a5ca90b893528ed4",
+    "sampling": {
+      "others_per_split": 2129,
+      "known_per_split": 2129,
+      "validation_seed": 42,
+      "test_seed": 43,
+      "reference": "Sentença: 2.129 páginas no treino original, terceira classe conhecida."
+    },
+    "threshold_rule": "Maximizar a rejeição de Others mantendo ao menos a cobertura mínima das classes conhecidas na validação; desempatar por maior cobertura e menor limiar.",
+    "min_known_coverage": 0.95,
+    "test_was_not_used_to_select_threshold": true,
+    "others_is_not_a_trained_output_class": true
+  },
+  "labels": [
+    "acordao_de_2_instancia",
+    "agravo_em_recurso_extraordinario",
+    "despacho_de_admissibilidade",
+    "peticao_do_RE",
+    "sentenca"
+  ],
+  "samples": {
+    "validation": {
+      "source": "/content/dataset_victor/validation_small.csv",
+      "population_after_cleaning": {
+        "outros": 83839,
+        "peticao_do_RE": 6347,
+        "sentenca": 1636,
+        "despacho_de_admissibilidade": 183,
+        "acordao_de_2_instancia": 299,
+        "agravo_em_recurso_extraordinario": 2128
+      },
+      "sample_counts": {
+        "outros": 2129,
+        "peticao_do_RE": 1274,
+        "sentenca": 329,
+        "agravo_em_recurso_extraordinario": 428,
+        "acordao_de_2_instancia": 61,
+        "despacho_de_admissibilidade": 37
+      },
+      "excluded_short_texts": {
+        "outros": 265,
+        "agravo_em_recurso_extraordinario": 21,
+        "peticao_do_RE": 17
+      }
+    },
+    "test": {
+      "source": "/content/dataset_victor/test_small.csv",
+      "population_after_cleaning": {
+        "outros": 85154,
+        "despacho_de_admissibilidade": 198,
+        "sentenca": 1475,
+        "agravo_em_recurso_extraordinario": 1831,
+        "peticao_do_RE": 6328,
+        "acordao_de_2_instancia": 273
+      },
+      "sample_counts": {
+        "outros": 2129,
+        "sentenca": 311,
+        "agravo_em_recurso_extraordinario": 386,
+        "peticao_do_RE": 1332,
+        "despacho_de_admissibilidade": 42,
+        "acordao_de_2_instancia": 58
+      },
+      "excluded_short_texts": {
+        "outros": 254,
+        "agravo_em_recurso_extraordinario": 10,
+        "peticao_do_RE": 3
+      }
+    }
+  },
+  "runtime": {
+    "device": "cuda",
+    "runtime_seconds": 335.799739218,
+    "versions": {
+      "torch": "2.11.0+cu128",
+      "numpy": "2.1.3",
+      "transformers": "5.16.1"
+    }
+  },
+  "configurations": {
+    "best_fold_5": {
+      "validation": {
+        "confidence_diagnostics": {
+          "others_forced_labels": {
+            "acordao_de_2_instancia": 90,
+            "peticao_do_RE": 1108,
+            "agravo_em_recurso_extraordinario": 362,
+            "despacho_de_admissibilidade": 195,
+            "sentenca": 374
+          },
+          "groups": {
+            "others": {
+              "count": 2129,
+              "mean": 0.9679810302870102,
+              "percentiles": {
+                "5": 0.7394091010093689,
+                "25": 0.996131420135498,
+                "50": 0.999769389629364,
+                "75": 0.9999251365661621,
+                "95": 0.9999554872512817
+              },
+              "at_or_above": {
+                "0.6": {
+                  "count": 2082,
+                  "rate": 0.9779239079379991
+                },
+                "0.8": {
+                  "count": 1991,
+                  "rate": 0.9351808360732738
+                },
+                "0.9": {
+                  "count": 1931,
+                  "rate": 0.9069985908877407
+                },
+                "0.95": {
+                  "count": 1866,
+                  "rate": 0.8764678252700798
+                },
+                "0.99": {
+                  "count": 1686,
+                  "rate": 0.7919210897134805
+                }
+              }
+            },
+            "known_correct": {
+              "count": 1927,
+              "mean": 0.9969275088339936,
+              "percentiles": {
+                "5": 0.9990265905857086,
+                "25": 0.9999191164970398,
+                "50": 0.9999425411224365,
+                "75": 0.9999585151672363,
+                "95": 0.9999594688415527
+              },
+              "at_or_above": {
+                "0.6": {
+                  "count": 1924,
+                  "rate": 0.9984431759211209
+                },
+                "0.8": {
+                  "count": 1920,
+                  "rate": 0.9963674104826155
+                },
+                "0.9": {
+                  "count": 1909,
+                  "rate": 0.9906590555267255
+                },
+                "0.95": {
+                  "count": 1898,
+                  "rate": 0.9849507005708354
+                },
+                "0.99": {
+                  "count": 1877,
+                  "rate": 0.9740529320186819
+                }
+              }
+            },
+            "known_incorrect": {
+              "count": 202,
+              "mean": 0.9491443598624503,
+              "percentiles": {
+                "5": 0.7290988475084305,
+                "25": 0.9763775020837784,
+                "50": 0.9995819330215454,
+                "75": 0.9999105632305145,
+                "95": 0.9999478995800019
+              },
+              "at_or_above": {
+                "0.6": {
+                  "count": 197,
+                  "rate": 0.9752475247524752
+                },
+                "0.8": {
+                  "count": 176,
+                  "rate": 0.8712871287128713
+                },
+                "0.9": {
+                  "count": 167,
+                  "rate": 0.8267326732673267
+                },
+                "0.95": {
+                  "count": 158,
+                  "rate": 0.7821782178217822
+                },
+                "0.99": {
+                  "count": 145,
+                  "rate": 0.7178217821782178
+                }
+              }
+            }
+          }
+        },
+        "selected_threshold": {
+          "threshold": 0.9886693358421327,
+          "known_coverage": 0.9511507750117426,
+          "others_rejection_rate": 0.199154532644434
+        },
+        "selected_threshold_metrics": {
+          "threshold": 0.9886693358421327,
+          "n_known": 2129,
+          "n_others": 2129,
+          "known_coverage": 0.9511507750117426,
+          "known_rejection_rate": 0.048849224988257396,
+          "others_rejection_rate": 0.199154532644434,
+          "others_false_acceptance_rate": 0.8008454673555659,
+          "accepted_known_accuracy": 0.9274074074074075,
+          "accepted_total_risk": 0.49651474530831097,
+          "total_review_rate": 0.1240018788163457,
+          "closed_set_accuracy": 0.9051197745420385,
+          "closed_set_f1_macro": 0.8964940068622198,
+          "per_class": {
+            "acordao_de_2_instancia": {
+              "support": 61,
+              "coverage": 0.9508196721311475,
+              "accepted_accuracy": 0.9310344827586207
+            },
+            "agravo_em_recurso_extraordinario": {
+              "support": 428,
+              "coverage": 0.8995327102803738,
+              "accepted_accuracy": 0.7948051948051948
+            },
+            "despacho_de_admissibilidade": {
+              "support": 37,
+              "coverage": 0.972972972972973,
+              "accepted_accuracy": 0.8888888888888888
+            },
+            "peticao_do_RE": {
+              "support": 1274,
+              "coverage": 0.966248037676609,
+              "accepted_accuracy": 0.9642567018683996
+            },
+            "sentenca": {
+              "support": 329,
+              "coverage": 0.9574468085106383,
+              "accepted_accuracy": 0.9492063492063492
+            }
+          }
+        },
+        "checkpoint_metrics": [
+          {
+            "threshold": 0.0,
+            "n_known": 2129,
+            "n_others": 2129,
+            "known_coverage": 1.0,
+            "known_rejection_rate": 0.0,
+            "others_rejection_rate": 0.0,
+            "others_false_acceptance_rate": 1.0,
+            "accepted_known_accuracy": 0.9051197745420385,
+            "accepted_total_risk": 0.5474401127289807,
+            "total_review_rate": 0.0,
+            "closed_set_accuracy": 0.9051197745420385,
+            "closed_set_f1_macro": 0.8964940068622198,
+            "per_class": {
+              "acordao_de_2_instancia": {
+                "support": 61,
+                "coverage": 1.0,
+                "accepted_accuracy": 0.8852459016393442
+              },
+              "agravo_em_recurso_extraordinario": {
+                "support": 428,
+                "coverage": 1.0,
+                "accepted_accuracy": 0.7570093457943925
+              },
+              "despacho_de_admissibilidade": {
+                "support": 37,
+                "coverage": 1.0,
+                "accepted_accuracy": 0.8918918918918919
+              },
+              "peticao_do_RE": {
+                "support": 1274,
+                "coverage": 1.0,
+                "accepted_accuracy": 0.9505494505494505
+              },
+              "sentenca": {
+                "support": 329,
+                "coverage": 1.0,
+                "accepted_accuracy": 0.9270516717325228
+              }
+            }
+          },
+          {
+            "threshold": 0.2,
+            "n_known": 2129,
+            "n_others": 2129,
+            "known_coverage": 1.0,
+            "known_rejection_rate": 0.0,
+            "others_rejection_rate": 0.0,
+            "others_false_acceptance_rate": 1.0,
+            "accepted_known_accuracy": 0.9051197745420385,
+            "accepted_total_risk": 0.5474401127289807,
+            "total_review_rate": 0.0,
+            "closed_set_accuracy": 0.9051197745420385,
+            "closed_set_f1_macro": 0.8964940068622198,
+            "per_class": {
+              "acordao_de_2_instancia": {
+                "support": 61,
+                "coverage": 1.0,
+                "accepted_accuracy": 0.8852459016393442
+              },
+              "agravo_em_recurso_extraordinario": {
+                "support": 428,
+                "coverage": 1.0,
+                "accepted_accuracy": 0.7570093457943925
+              },
+              "despacho_de_admissibilidade": {
+                "support": 37,
+                "coverage": 1.0,
+                "accepted_accuracy": 0.8918918918918919
+              },
+              "peticao_do_RE": {
+                "support": 1274,
+                "coverage": 1.0,
+                "accepted_accuracy": 0.9505494505494505
+              },
+              "sentenca": {
+                "support": 329,
+                "coverage": 1.0,
+                "accepted_accuracy": 0.9270516717325228
+              }
+            }
+          },
+          {
+            "threshold": 0.4,
+            "n_known": 2129,
+            "n_others": 2129,
+            "known_coverage": 1.0,
+            "known_rejection_rate": 0.0,
+            "others_rejection_rate": 0.0,
+            "others_false_acceptance_rate": 1.0,
+            "accepted_known_accuracy": 0.9051197745420385,
+            "accepted_total_risk": 0.5474401127289807,
+            "total_review_rate": 0.0,
+            "closed_set_accuracy": 0.9051197745420385,
+            "closed_set_f1_macro": 0.8964940068622198,
+            "per_class": {
+              "acordao_de_2_instancia": {
+                "support": 61,
+                "coverage": 1.0,
+                "accepted_accuracy": 0.8852459016393442
+              },
+              "agravo_em_recurso_extraordinario": {
+                "support": 428,
+                "coverage": 1.0,
+                "accepted_accuracy": 0.7570093457943925
+              },
+              "despacho_de_admissibilidade": {
+                "support": 37,
+                "coverage": 1.0,
+                "accepted_accuracy": 0.8918918918918919
+              },
+              "peticao_do_RE": {
+                "support": 1274,
+                "coverage": 1.0,
+                "accepted_accuracy": 0.9505494505494505
+              },
+              "sentenca": {
+                "support": 329,
+                "coverage": 1.0,
+                "accepted_accuracy": 0.9270516717325228
+              }
+            }
+          },
+          {
+            "threshold": 0.6,
+            "n_known": 2129,
+            "n_others": 2129,
+            "known_coverage": 0.9962423673085956,
+            "known_rejection_rate": 0.0037576326914044154,
+            "others_rejection_rate": 0.02207609206200094,
+            "others_false_acceptance_rate": 0.9779239079379991,
+            "accepted_known_accuracy": 0.9071192833569072,
+            "accepted_total_risk": 0.5422317392338806,
+            "total_review_rate": 0.012916862376702677,
+            "closed_set_accuracy": 0.9051197745420385,
+            "closed_set_f1_macro": 0.8964940068622198,
+            "per_class": {
+              "acordao_de_2_instancia": {
+                "support": 61,
+                "coverage": 0.9836065573770492,
+                "accepted_accuracy": 0.9
+              },
+              "agravo_em_recurso_extraordinario": {
+                "support": 428,
+                "coverage": 0.9953271028037384,
+                "accepted_accuracy": 0.7605633802816901
+              },
+              "despacho_de_admissibilidade": {
+                "support": 37,
+                "coverage": 1.0,
+                "accepted_accuracy": 0.8918918918918919
+              },
+              "peticao_do_RE": {
+                "support": 1274,
+                "coverage": 0.9968602825745683,
+                "accepted_accuracy": 0.9519685039370078
+              },
+              "sentenca": {
+                "support": 329,
+                "coverage": 0.9969604863221885,
+                "accepted_accuracy": 0.926829268292683
+              }
+            }
+          },
+          {
+            "threshold": 0.8,
+            "n_known": 2129,
+            "n_others": 2129,
+            "known_coverage": 0.9844997651479568,
+            "known_rejection_rate": 0.015500234852043212,
+            "others_rejection_rate": 0.06481916392672617,
+            "others_false_acceptance_rate": 0.9351808360732738,
+            "accepted_known_accuracy": 0.916030534351145,
+            "accepted_total_risk": 0.5302177636408123,
+            "total_review_rate": 0.040159699389384684,
+            "closed_set_accuracy": 0.9051197745420385,
+            "closed_set_f1_macro": 0.8964940068622198,
+            "per_class": {
+              "acordao_de_2_instancia": {
+                "support": 61,
+                "coverage": 0.9508196721311475,
+                "accepted_accuracy": 0.9310344827586207
+              },
+              "agravo_em_recurso_extraordinario": {
+                "support": 428,
+                "coverage": 0.9742990654205608,
+                "accepted_accuracy": 0.7745803357314148
+              },
+              "despacho_de_admissibilidade": {
+                "support": 37,
+                "coverage": 1.0,
+                "accepted_accuracy": 0.8918918918918919
+              },
+              "peticao_do_RE": {
+                "support": 1274,
+                "coverage": 0.9882260596546311,
+                "accepted_accuracy": 0.9586973788721207
+              },
+              "sentenca": {
+                "support": 329,
+                "coverage": 0.9878419452887538,
+                "accepted_accuracy": 0.9323076923076923
+              }
+            }
+          },
+          {
+            "threshold": 0.9,
+            "n_known": 2129,
+            "n_others": 2129,
+            "known_coverage": 0.9751056834194457,
+            "known_rejection_rate": 0.02489431658055425,
+            "others_rejection_rate": 0.09300140911225928,
+            "others_false_acceptance_rate": 0.9069985908877407,
+            "accepted_known_accuracy": 0.9195568400770713,
+            "accepted_total_risk": 0.5235837284751684,
+            "total_review_rate": 0.05894786284640676,
+            "closed_set_accuracy": 0.9051197745420385,
+            "closed_set_f1_macro": 0.8964940068622198,
+            "per_class": {
+              "acordao_de_2_instancia": {
+                "support": 61,
+                "coverage": 0.9508196721311475,
+                "accepted_accuracy": 0.9310344827586207
+              },
+              "agravo_em_recurso_extraordinario": {
+                "support": 428,
+                "coverage": 0.9439252336448598,
+                "accepted_accuracy": 0.7797029702970297
+              },
+              "despacho_de_admissibilidade": {
+                "support": 37,
+                "coverage": 0.972972972972973,
+                "accepted_accuracy": 0.8888888888888888
+              },
+              "peticao_do_RE": {
+                "support": 1274,
+                "coverage": 0.9843014128728415,
+                "accepted_accuracy": 0.9609250398724083
+              },
+              "sentenca": {
+                "support": 329,
+                "coverage": 0.9848024316109423,
+                "accepted_accuracy": 0.9351851851851852
+              }
+            }
+          },
+          {
+            "threshold": 0.95,
+            "n_known": 2129,
+            "n_others": 2129,
+            "known_coverage": 0.9657116016909347,
+            "known_rejection_rate": 0.03428839830906529,
+            "others_rejection_rate": 0.12353217472992015,
+            "others_false_acceptance_rate": 0.8764678252700798,
+            "accepted_known_accuracy": 0.9231517509727627,
+            "accepted_total_risk": 0.5160632330443651,
+            "total_review_rate": 0.07891028651949272,
+            "closed_set_accuracy": 0.9051197745420385,
+            "closed_set_f1_macro": 0.8964940068622198,
+            "per_class": {
+              "acordao_de_2_instancia": {
+                "support": 61,
+                "coverage": 0.9508196721311475,
+                "accepted_accuracy": 0.9310344827586207
+              },
+              "agravo_em_recurso_extraordinario": {
+                "support": 428,
+                "coverage": 0.927570093457944,
+                "accepted_accuracy": 0.7858942065491183
+              },
+              "despacho_de_admissibilidade": {
+                "support": 37,
+                "coverage": 0.972972972972973,
+                "accepted_accuracy": 0.8888888888888888
+              },
+              "peticao_do_RE": {
+                "support": 1274,
+                "coverage": 0.9764521193092621,
+                "accepted_accuracy": 0.9638263665594855
+              },
+              "sentenca": {
+                "support": 329,
+                "coverage": 0.9756838905775076,
+                "accepted_accuracy": 0.9376947040498442
+              }
+            }
+          },
+          {
+            "threshold": 0.975,
+            "n_known": 2129,
+            "n_others": 2129,
+            "known_coverage": 0.9577266322217003,
+            "known_rejection_rate": 0.042273367778299674,
+            "others_rejection_rate": 0.16063879755753874,
+            "others_false_acceptance_rate": 0.8393612024424613,
+            "accepted_known_accuracy": 0.9259440902403139,
+            "accepted_total_risk": 0.5065342394145321,
+            "total_review_rate": 0.10145608266791921,
+            "closed_set_accuracy": 0.9051197745420385,
+            "closed_set_f1_macro": 0.8964940068622198,
+            "per_class": {
+              "acordao_de_2_instancia": {
+                "support": 61,
+                "coverage": 0.9508196721311475,
+                "accepted_accuracy": 0.9310344827586207
+              },
+              "agravo_em_recurso_extraordinario": {
+                "support": 428,
+                "coverage": 0.9088785046728972,
+                "accepted_accuracy": 0.794344473007712
+              },
+              "despacho_de_admissibilidade": {
+                "support": 37,
+                "coverage": 0.972972972972973,
+                "accepted_accuracy": 0.8888888888888888
+              },
+              "peticao_do_RE": {
+                "support": 1274,
+                "coverage": 0.9717425431711146,
+                "accepted_accuracy": 0.9636510500807755
+              },
+              "sentenca": {
+                "support": 329,
+                "coverage": 0.9665653495440729,
+                "accepted_accuracy": 0.9433962264150944
+              }
+            }
+          },
+          {
+            "threshold": 0.9886693358421327,
+            "n_known": 2129,
+            "n_others": 2129,
+            "known_coverage": 0.9511507750117426,
+            "known_rejection_rate": 0.048849224988257396,
+            "others_rejection_rate": 0.199154532644434,
+            "others_false_acceptance_rate": 0.8008454673555659,
+            "accepted_known_accuracy": 0.9274074074074075,
+            "accepted_total_risk": 0.49651474530831097,
+            "total_review_rate": 0.1240018788163457,
+            "closed_set_accuracy": 0.9051197745420385,
+            "closed_set_f1_macro": 0.8964940068622198,
+            "per_class": {
+              "acordao_de_2_instancia": {
+                "support": 61,
+                "coverage": 0.9508196721311475,
+                "accepted_accuracy": 0.9310344827586207
+              },
+              "agravo_em_recurso_extraordinario": {
+                "support": 428,
+                "coverage": 0.8995327102803738,
+                "accepted_accuracy": 0.7948051948051948
+              },
+              "despacho_de_admissibilidade": {
+                "support": 37,
+                "coverage": 0.972972972972973,
+                "accepted_accuracy": 0.8888888888888888
+              },
+              "peticao_do_RE": {
+                "support": 1274,
+                "coverage": 0.966248037676609,
+                "accepted_accuracy": 0.9642567018683996
+              },
+              "sentenca": {
+                "support": 329,
+                "coverage": 0.9574468085106383,
+                "accepted_accuracy": 0.9492063492063492
+              }
+            }
+          },
+          {
+            "threshold": 0.99,
+            "n_known": 2129,
+            "n_others": 2129,
+            "known_coverage": 0.949741662752466,
+            "known_rejection_rate": 0.050258337247534056,
+            "others_rejection_rate": 0.20807891028651948,
+            "others_false_acceptance_rate": 0.7919210897134805,
+            "accepted_known_accuracy": 0.9282888229475766,
+            "accepted_total_risk": 0.49379719525350596,
+            "total_review_rate": 0.12916862376702679,
+            "closed_set_accuracy": 0.9051197745420385,
+            "closed_set_f1_macro": 0.8964940068622198,
+            "per_class": {
+              "acordao_de_2_instancia": {
+                "support": 61,
+                "coverage": 0.9508196721311475,
+                "accepted_accuracy": 0.9310344827586207
+              },
+              "agravo_em_recurso_extraordinario": {
+                "support": 428,
+                "coverage": 0.8995327102803738,
+                "accepted_accuracy": 0.7948051948051948
+              },
+              "despacho_de_admissibilidade": {
+                "support": 37,
+                "coverage": 0.9459459459459459,
+                "accepted_accuracy": 0.9142857142857143
+              },
+              "peticao_do_RE": {
+                "support": 1274,
+                "coverage": 0.9646781789638933,
+                "accepted_accuracy": 0.9650122050447518
+              },
+              "sentenca": {
+                "support": 329,
+                "coverage": 0.9574468085106383,
+                "accepted_accuracy": 0.9492063492063492
+              }
+            }
+          },
+          {
+            "threshold": 0.995,
+            "n_known": 2129,
+            "n_others": 2129,
+            "known_coverage": 0.9417566932832315,
+            "known_rejection_rate": 0.05824330671676844,
+            "others_rejection_rate": 0.24095819633630813,
+            "others_false_acceptance_rate": 0.7590418036636919,
+            "accepted_known_accuracy": 0.9326683291770573,
+            "accepted_total_risk": 0.4835680751173709,
+            "total_review_rate": 0.1496007515265383,
+            "closed_set_accuracy": 0.9051197745420385,
+            "closed_set_f1_macro": 0.8964940068622198,
+            "per_class": {
+              "acordao_de_2_instancia": {
+                "support": 61,
+                "coverage": 0.9180327868852459,
+                "accepted_accuracy": 0.9464285714285714
+              },
+              "agravo_em_recurso_extraordinario": {
+                "support": 428,
+                "coverage": 0.883177570093458,
+                "accepted_accuracy": 0.8068783068783069
+              },
+              "despacho_de_admissibilidade": {
+                "support": 37,
+                "coverage": 0.918918918918919,
+                "accepted_accuracy": 0.9411764705882353
+              },
+              "peticao_do_RE": {
+                "support": 1274,
+                "coverage": 0.9615384615384616,
+                "accepted_accuracy": 0.9657142857142857
+              },
+              "sentenca": {
+                "support": 329,
+                "coverage": 0.9483282674772037,
+                "accepted_accuracy": 0.9519230769230769
+              }
+            }
+          },
+          {
+            "threshold": 0.999,
+            "n_known": 2129,
+            "n_others": 2129,
+            "known_coverage": 0.9154532644434007,
+            "known_rejection_rate": 0.08454673555659935,
+            "others_rejection_rate": 0.35086895255988726,
+            "others_false_acceptance_rate": 0.6491310474401127,
+            "accepted_known_accuracy": 0.9399692149820421,
+            "accepted_total_risk": 0.45001501050735515,
+            "total_review_rate": 0.2177078440582433,
+            "closed_set_accuracy": 0.9051197745420385,
+            "closed_set_f1_macro": 0.8964940068622198,
+            "per_class": {
+              "acordao_de_2_instancia": {
+                "support": 61,
+                "coverage": 0.9180327868852459,
+                "accepted_accuracy": 0.9464285714285714
+              },
+              "agravo_em_recurso_extraordinario": {
+                "support": 428,
+                "coverage": 0.8457943925233645,
+                "accepted_accuracy": 0.8204419889502762
+              },
+              "despacho_de_admissibilidade": {
+                "support": 37,
+                "coverage": 0.8918918918918919,
+                "accepted_accuracy": 0.9696969696969697
+              },
+              "peticao_do_RE": {
+                "support": 1274,
+                "coverage": 0.9356357927786499,
+                "accepted_accuracy": 0.9697986577181208
+              },
+              "sentenca": {
+                "support": 329,
+                "coverage": 0.9300911854103343,
+                "accepted_accuracy": 0.9607843137254902
+              }
+            }
+          },
+          {
+            "threshold": 1.0,
+            "n_known": 2129,
+            "n_others": 2129,
+            "known_coverage": 0.0,
+            "known_rejection_rate": 1.0,
+            "others_rejection_rate": 1.0,
+            "others_false_acceptance_rate": 0.0,
+            "accepted_known_accuracy": null,
+            "accepted_total_risk": null,
+            "total_review_rate": 1.0,
+            "closed_set_accuracy": 0.9051197745420385,
+            "closed_set_f1_macro": 0.8964940068622198,
+            "per_class": {
+              "acordao_de_2_instancia": {
+                "support": 61,
+                "coverage": 0.0,
+                "accepted_accuracy": null
+              },
+              "agravo_em_recurso_extraordinario": {
+                "support": 428,
+                "coverage": 0.0,
+                "accepted_accuracy": null
+              },
+              "despacho_de_admissibilidade": {
+                "support": 37,
+                "coverage": 0.0,
+                "accepted_accuracy": null
+              },
+              "peticao_do_RE": {
+                "support": 1274,
+                "coverage": 0.0,
+                "accepted_accuracy": null
+              },
+              "sentenca": {
+                "support": 329,
+                "coverage": 0.0,
+                "accepted_accuracy": null
+              }
+            }
+          }
+        ]
+      },
+      "test": {
+        "confidence_diagnostics": {
+          "others_forced_labels": {
+            "despacho_de_admissibilidade": 198,
+            "peticao_do_RE": 1147,
+            "agravo_em_recurso_extraordinario": 357,
+            "sentenca": 330,
+            "acordao_de_2_instancia": 97
+          },
+          "groups": {
+            "others": {
+              "count": 2129,
+              "mean": 0.9613919927795037,
+              "percentiles": {
+                "5": 0.7082601904869079,
+                "25": 0.993499755859375,
+                "50": 0.9997319579124451,
+                "75": 0.9999253749847412,
+                "95": 0.9999559640884399
+              },
+              "at_or_above": {
+                "0.6": {
+                  "count": 2072,
+                  "rate": 0.9732268670737435
+                },
+                "0.8": {
+                  "count": 1964,
+                  "rate": 0.9224988257397839
+                },
+                "0.9": {
+                  "count": 1870,
+                  "rate": 0.878346641615782
+                },
+                "0.95": {
+                  "count": 1811,
+                  "rate": 0.8506341005166745
+                },
+                "0.99": {
+                  "count": 1640,
+                  "rate": 0.7703147017379052
+                }
+              }
+            },
+            "known_correct": {
+              "count": 1947,
+              "mean": 0.9951436300123417,
+              "percentiles": {
+                "5": 0.9973758697509766,
+                "25": 0.9999107122421265,
+                "50": 0.9999420642852783,
+                "75": 0.9999585151672363,
+                "95": 0.9999593496322632
+              },
+              "at_or_above": {
+                "0.6": {
+                  "count": 1944,
+                  "rate": 0.9984591679506933
+                },
+                "0.8": {
+                  "count": 1931,
+                  "rate": 0.9917822290703646
+                },
+                "0.9": {
+                  "count": 1916,
+                  "rate": 0.9840780688238315
+                },
+                "0.95": {
+                  "count": 1904,
+                  "rate": 0.977914740626605
+                },
+                "0.99": {
+                  "count": 1877,
+                  "rate": 0.9640472521828454
+                }
+              }
+            },
+            "known_incorrect": {
+              "count": 182,
+              "mean": 0.9411763473526462,
+              "percentiles": {
+                "5": 0.6197441160678864,
+                "25": 0.9557441174983978,
+                "50": 0.9989349246025085,
+                "75": 0.9998753666877747,
+                "95": 0.9999264419078827
+              },
+              "at_or_above": {
+                "0.6": {
+                  "count": 173,
+                  "rate": 0.9505494505494505
+                },
+                "0.8": {
+                  "count": 158,
+                  "rate": 0.8681318681318682
+                },
+                "0.9": {
+                  "count": 149,
+                  "rate": 0.8186813186813187
+                },
+                "0.95": {
+                  "count": 137,
+                  "rate": 0.7527472527472527
+                },
+                "0.99": {
+                  "count": 123,
+                  "rate": 0.6758241758241759
+                }
+              }
+            }
+          }
+        },
+        "selected_threshold_metrics": {
+          "threshold": 0.9886693358421327,
+          "n_known": 2129,
+          "n_others": 2129,
+          "known_coverage": 0.9422263973696571,
+          "known_rejection_rate": 0.05777360263034288,
+          "others_rejection_rate": 0.22451855331141382,
+          "others_false_acceptance_rate": 0.7754814466885862,
+          "accepted_known_accuracy": 0.9386839481555334,
+          "accepted_total_risk": 0.4850970741044572,
+          "total_review_rate": 0.14114607797087836,
+          "closed_set_accuracy": 0.9145138562705496,
+          "closed_set_f1_macro": 0.9125197393056915,
+          "per_class": {
+            "acordao_de_2_instancia": {
+              "support": 58,
+              "coverage": 1.0,
+              "accepted_accuracy": 0.9827586206896551
+            },
+            "agravo_em_recurso_extraordinario": {
+              "support": 386,
+              "coverage": 0.883419689119171,
+              "accepted_accuracy": 0.8328445747800587
+            },
+            "despacho_de_admissibilidade": {
+              "support": 42,
+              "coverage": 0.9285714285714286,
+              "accepted_accuracy": 0.9487179487179487
+            },
+            "peticao_do_RE": {
+              "support": 1332,
+              "coverage": 0.9512012012012012,
+              "accepted_accuracy": 0.9565903709550119
+            },
+            "sentenca": {
+              "support": 311,
+              "coverage": 0.9678456591639871,
+              "accepted_accuracy": 0.973421926910299
+            }
+          }
+        },
+        "confusion_with_manual_review": {
+          "acordao_de_2_instancia": {
+            "acordao_de_2_instancia": 57,
+            "agravo_em_recurso_extraordinario": 0,
+            "despacho_de_admissibilidade": 0,
+            "peticao_do_RE": 1,
+            "sentenca": 0,
+            "revisao_manual": 0
+          },
+          "agravo_em_recurso_extraordinario": {
+            "acordao_de_2_instancia": 1,
+            "agravo_em_recurso_extraordinario": 284,
+            "despacho_de_admissibilidade": 1,
+            "peticao_do_RE": 50,
+            "sentenca": 5,
+            "revisao_manual": 45
+          },
+          "despacho_de_admissibilidade": {
+            "acordao_de_2_instancia": 0,
+            "agravo_em_recurso_extraordinario": 0,
+            "despacho_de_admissibilidade": 37,
+            "peticao_do_RE": 1,
+            "sentenca": 1,
+            "revisao_manual": 3
+          },
+          "peticao_do_RE": {
+            "acordao_de_2_instancia": 3,
+            "agravo_em_recurso_extraordinario": 43,
+            "despacho_de_admissibilidade": 0,
+            "peticao_do_RE": 1212,
+            "sentenca": 9,
+            "revisao_manual": 65
+          },
+          "sentenca": {
+            "acordao_de_2_instancia": 0,
+            "agravo_em_recurso_extraordinario": 4,
+            "despacho_de_admissibilidade": 0,
+            "peticao_do_RE": 4,
+            "sentenca": 293,
+            "revisao_manual": 10
+          },
+          "outros": {
+            "acordao_de_2_instancia": 65,
+            "agravo_em_recurso_extraordinario": 274,
+            "despacho_de_admissibilidade": 130,
+            "peticao_do_RE": 972,
+            "sentenca": 210,
+            "revisao_manual": 478
+          }
+        }
+      }
+    },
+    "ensemble_5_folds": {
+      "validation": {
+        "confidence_diagnostics": {
+          "others_forced_labels": {
+            "peticao_do_RE": 1116,
+            "agravo_em_recurso_extraordinario": 386,
+            "sentenca": 336,
+            "despacho_de_admissibilidade": 221,
+            "acordao_de_2_instancia": 70
+          },
+          "groups": {
+            "others": {
+              "count": 2129,
+              "mean": 0.8457111988007616,
+              "percentiles": {
+                "5": 0.5015129702375271,
+                "25": 0.7041648626793177,
+                "50": 0.9592992901802063,
+                "75": 0.9998419404029846,
+                "95": 0.9999564743041992
+              },
+              "at_or_above": {
+                "0.6": {
+                  "count": 1824,
+                  "rate": 0.8567402536402067
+                },
+                "0.8": {
+                  "count": 1334,
+                  "rate": 0.6265852512916862
+                },
+                "0.9": {
+                  "count": 1157,
+                  "rate": 0.5434476279943635
+                },
+                "0.95": {
+                  "count": 1084,
+                  "rate": 0.5091592296852983
+                },
+                "0.99": {
+                  "count": 956,
+                  "rate": 0.44903710662282764
+                }
+              }
+            },
+            "known_correct": {
+              "count": 1947,
+              "mean": 0.9823016678906543,
+              "percentiles": {
+                "5": 0.8171510946750642,
+                "25": 0.9999057888984679,
+                "50": 0.9999431371688843,
+                "75": 0.9999623537063599,
+                "95": 0.9999629974365234
+              },
+              "at_or_above": {
+                "0.6": {
+                  "count": 1931,
+                  "rate": 0.9917822290703646
+                },
+                "0.8": {
+                  "count": 1862,
+                  "rate": 0.9563430919363123
+                },
+                "0.9": {
+                  "count": 1824,
+                  "rate": 0.9368258859784283
+                },
+                "0.95": {
+                  "count": 1813,
+                  "rate": 0.9311761684643041
+                },
+                "0.99": {
+                  "count": 1788,
+                  "rate": 0.9183359013867488
+                }
+              }
+            },
+            "known_incorrect": {
+              "count": 182,
+              "mean": 0.8653202328675914,
+              "percentiles": {
+                "5": 0.5626529146544635,
+                "25": 0.7748692908542579,
+                "50": 0.9790570974349975,
+                "75": 0.9998022943735121,
+                "95": 0.999929375052452
+              },
+              "at_or_above": {
+                "0.6": {
+                  "count": 162,
+                  "rate": 0.8901098901098901
+                },
+                "0.8": {
+                  "count": 120,
+                  "rate": 0.6593406593406593
+                },
+                "0.9": {
+                  "count": 108,
+                  "rate": 0.5934065934065934
+                },
+                "0.95": {
+                  "count": 100,
+                  "rate": 0.5494505494505495
+                },
+                "0.99": {
+                  "count": 81,
+                  "rate": 0.44505494505494503
+                }
+              }
+            }
+          }
+        },
+        "selected_threshold": {
+          "threshold": 0.7812856763601305,
+          "known_coverage": 0.9502113668388915,
+          "others_rejection_rate": 0.316580554250822
+        },
+        "selected_threshold_metrics": {
+          "threshold": 0.7812856763601305,
+          "n_known": 2129,
+          "n_others": 2129,
+          "known_coverage": 0.9502113668388915,
+          "known_rejection_rate": 0.0497886331611085,
+          "others_rejection_rate": 0.316580554250822,
+          "others_false_acceptance_rate": 0.683419445749178,
+          "accepted_known_accuracy": 0.9337617399901137,
+          "accepted_total_risk": 0.4568717653824037,
+          "total_review_rate": 0.18318459370596524,
+          "closed_set_accuracy": 0.9145138562705496,
+          "closed_set_f1_macro": 0.9071387500826787,
+          "per_class": {
+            "acordao_de_2_instancia": {
+              "support": 61,
+              "coverage": 1.0,
+              "accepted_accuracy": 0.8852459016393442
+            },
+            "agravo_em_recurso_extraordinario": {
+              "support": 428,
+              "coverage": 0.9369158878504673,
+              "accepted_accuracy": 0.800498753117207
+            },
+            "despacho_de_admissibilidade": {
+              "support": 37,
+              "coverage": 0.8918918918918919,
+              "accepted_accuracy": 0.9696969696969697
+            },
+            "peticao_do_RE": {
+              "support": 1274,
+              "coverage": 0.9560439560439561,
+              "accepted_accuracy": 0.9688013136288999
+            },
+            "sentenca": {
+              "support": 329,
+              "coverage": 0.9422492401215805,
+              "accepted_accuracy": 0.9741935483870968
+            }
+          }
+        },
+        "checkpoint_metrics": [
+          {
+            "threshold": 0.0,
+            "n_known": 2129,
+            "n_others": 2129,
+            "known_coverage": 1.0,
+            "known_rejection_rate": 0.0,
+            "others_rejection_rate": 0.0,
+            "others_false_acceptance_rate": 1.0,
+            "accepted_known_accuracy": 0.9145138562705496,
+            "accepted_total_risk": 0.5427430718647253,
+            "total_review_rate": 0.0,
+            "closed_set_accuracy": 0.9145138562705496,
+            "closed_set_f1_macro": 0.9071387500826787,
+            "per_class": {
+              "acordao_de_2_instancia": {
+                "support": 61,
+                "coverage": 1.0,
+                "accepted_accuracy": 0.8852459016393442
+              },
+              "agravo_em_recurso_extraordinario": {
+                "support": 428,
+                "coverage": 1.0,
+                "accepted_accuracy": 0.7827102803738317
+              },
+              "despacho_de_admissibilidade": {
+                "support": 37,
+                "coverage": 1.0,
+                "accepted_accuracy": 0.8918918918918919
+              },
+              "peticao_do_RE": {
+                "support": 1274,
+                "coverage": 1.0,
+                "accepted_accuracy": 0.9529042386185244
+              },
+              "sentenca": {
+                "support": 329,
+                "coverage": 1.0,
+                "accepted_accuracy": 0.9452887537993921
+              }
+            }
+          },
+          {
+            "threshold": 0.2,
+            "n_known": 2129,
+            "n_others": 2129,
+            "known_coverage": 1.0,
+            "known_rejection_rate": 0.0,
+            "others_rejection_rate": 0.0,
+            "others_false_acceptance_rate": 1.0,
+            "accepted_known_accuracy": 0.9145138562705496,
+            "accepted_total_risk": 0.5427430718647253,
+            "total_review_rate": 0.0,
+            "closed_set_accuracy": 0.9145138562705496,
+            "closed_set_f1_macro": 0.9071387500826787,
+            "per_class": {
+              "acordao_de_2_instancia": {
+                "support": 61,
+                "coverage": 1.0,
+                "accepted_accuracy": 0.8852459016393442
+              },
+              "agravo_em_recurso_extraordinario": {
+                "support": 428,
+                "coverage": 1.0,
+                "accepted_accuracy": 0.7827102803738317
+              },
+              "despacho_de_admissibilidade": {
+                "support": 37,
+                "coverage": 1.0,
+                "accepted_accuracy": 0.8918918918918919
+              },
+              "peticao_do_RE": {
+                "support": 1274,
+                "coverage": 1.0,
+                "accepted_accuracy": 0.9529042386185244
+              },
+              "sentenca": {
+                "support": 329,
+                "coverage": 1.0,
+                "accepted_accuracy": 0.9452887537993921
+              }
+            }
+          },
+          {
+            "threshold": 0.4,
+            "n_known": 2129,
+            "n_others": 2129,
+            "known_coverage": 0.9990605918271489,
+            "known_rejection_rate": 0.0009394081728511038,
+            "others_rejection_rate": 0.009394081728511038,
+            "others_false_acceptance_rate": 0.9906059182714889,
+            "accepted_known_accuracy": 0.9153737658674189,
+            "accepted_total_risk": 0.5403682719546742,
+            "total_review_rate": 0.005166744950681071,
+            "closed_set_accuracy": 0.9145138562705496,
+            "closed_set_f1_macro": 0.9071387500826787,
+            "per_class": {
+              "acordao_de_2_instancia": {
+                "support": 61,
+                "coverage": 1.0,
+                "accepted_accuracy": 0.8852459016393442
+              },
+              "agravo_em_recurso_extraordinario": {
+                "support": 428,
+                "coverage": 1.0,
+                "accepted_accuracy": 0.7827102803738317
+              },
+              "despacho_de_admissibilidade": {
+                "support": 37,
+                "coverage": 1.0,
+                "accepted_accuracy": 0.8918918918918919
+              },
+              "peticao_do_RE": {
+                "support": 1274,
+                "coverage": 0.9984301412872841,
+                "accepted_accuracy": 0.9544025157232704
+              },
+              "sentenca": {
+                "support": 329,
+                "coverage": 1.0,
+                "accepted_accuracy": 0.9452887537993921
+              }
+            }
+          },
+          {
+            "threshold": 0.6,
+            "n_known": 2129,
+            "n_others": 2129,
+            "known_coverage": 0.9830906528886801,
+            "known_rejection_rate": 0.016909347111319868,
+            "others_rejection_rate": 0.14325974635979333,
+            "others_false_acceptance_rate": 0.8567402536402067,
+            "accepted_known_accuracy": 0.9225991399904443,
+            "accepted_total_risk": 0.5070206790911411,
+            "total_review_rate": 0.0800845467355566,
+            "closed_set_accuracy": 0.9145138562705496,
+            "closed_set_f1_macro": 0.9071387500826787,
+            "per_class": {
+              "acordao_de_2_instancia": {
+                "support": 61,
+                "coverage": 1.0,
+                "accepted_accuracy": 0.8852459016393442
+              },
+              "agravo_em_recurso_extraordinario": {
+                "support": 428,
+                "coverage": 0.9789719626168224,
+                "accepted_accuracy": 0.7923627684964201
+              },
+              "despacho_de_admissibilidade": {
+                "support": 37,
+                "coverage": 0.972972972972973,
+                "accepted_accuracy": 0.8888888888888888
+              },
+              "peticao_do_RE": {
+                "support": 1274,
+                "coverage": 0.9850863422291993,
+                "accepted_accuracy": 0.9617529880478087
+              },
+              "sentenca": {
+                "support": 329,
+                "coverage": 0.9787234042553191,
+                "accepted_accuracy": 0.9503105590062112
+              }
+            }
+          },
+          {
+            "threshold": 0.7812856763601305,
+            "n_known": 2129,
+            "n_others": 2129,
+            "known_coverage": 0.9502113668388915,
+            "known_rejection_rate": 0.0497886331611085,
+            "others_rejection_rate": 0.316580554250822,
+            "others_false_acceptance_rate": 0.683419445749178,
+            "accepted_known_accuracy": 0.9337617399901137,
+            "accepted_total_risk": 0.4568717653824037,
+            "total_review_rate": 0.18318459370596524,
+            "closed_set_accuracy": 0.9145138562705496,
+            "closed_set_f1_macro": 0.9071387500826787,
+            "per_class": {
+              "acordao_de_2_instancia": {
+                "support": 61,
+                "coverage": 1.0,
+                "accepted_accuracy": 0.8852459016393442
+              },
+              "agravo_em_recurso_extraordinario": {
+                "support": 428,
+                "coverage": 0.9369158878504673,
+                "accepted_accuracy": 0.800498753117207
+              },
+              "despacho_de_admissibilidade": {
+                "support": 37,
+                "coverage": 0.8918918918918919,
+                "accepted_accuracy": 0.9696969696969697
+              },
+              "peticao_do_RE": {
+                "support": 1274,
+                "coverage": 0.9560439560439561,
+                "accepted_accuracy": 0.9688013136288999
+              },
+              "sentenca": {
+                "support": 329,
+                "coverage": 0.9422492401215805,
+                "accepted_accuracy": 0.9741935483870968
+              }
+            }
+          },
+          {
+            "threshold": 0.8,
+            "n_known": 2129,
+            "n_others": 2129,
+            "known_coverage": 0.9309534992954439,
+            "known_rejection_rate": 0.06904650070455613,
+            "others_rejection_rate": 0.37341474870831376,
+            "others_false_acceptance_rate": 0.6265852512916862,
+            "accepted_known_accuracy": 0.9394550958627649,
+            "accepted_total_risk": 0.4384800965018094,
+            "total_review_rate": 0.22123062470643495,
+            "closed_set_accuracy": 0.9145138562705496,
+            "closed_set_f1_macro": 0.9071387500826787,
+            "per_class": {
+              "acordao_de_2_instancia": {
+                "support": 61,
+                "coverage": 0.9836065573770492,
+                "accepted_accuracy": 0.9
+              },
+              "agravo_em_recurso_extraordinario": {
+                "support": 428,
+                "coverage": 0.8901869158878505,
+                "accepted_accuracy": 0.8083989501312336
+              },
+              "despacho_de_admissibilidade": {
+                "support": 37,
+                "coverage": 0.8918918918918919,
+                "accepted_accuracy": 0.9696969696969697
+              },
+              "peticao_do_RE": {
+                "support": 1274,
+                "coverage": 0.945839874411303,
+                "accepted_accuracy": 0.9726141078838174
+              },
+              "sentenca": {
+                "support": 329,
+                "coverage": 0.9209726443768997,
+                "accepted_accuracy": 0.976897689768977
+              }
+            }
+          },
+          {
+            "threshold": 0.9,
+            "n_known": 2129,
+            "n_others": 2129,
+            "known_coverage": 0.9074682949741663,
+            "known_rejection_rate": 0.09253170502583373,
+            "others_rejection_rate": 0.4565523720056365,
+            "others_false_acceptance_rate": 0.5434476279943635,
+            "accepted_known_accuracy": 0.9440993788819876,
+            "accepted_total_risk": 0.4095176432502428,
+            "total_review_rate": 0.2745420385157351,
+            "closed_set_accuracy": 0.9145138562705496,
+            "closed_set_f1_macro": 0.9071387500826787,
+            "per_class": {
+              "acordao_de_2_instancia": {
+                "support": 61,
+                "coverage": 0.9508196721311475,
+                "accepted_accuracy": 0.9137931034482759
+              },
+              "agravo_em_recurso_extraordinario": {
+                "support": 428,
+                "coverage": 0.852803738317757,
+                "accepted_accuracy": 0.8246575342465754
+              },
+              "despacho_de_admissibilidade": {
+                "support": 37,
+                "coverage": 0.8648648648648649,
+                "accepted_accuracy": 0.96875
+              },
+              "peticao_do_RE": {
+                "support": 1274,
+                "coverage": 0.9254317111459969,
+                "accepted_accuracy": 0.9737065309584394
+              },
+              "sentenca": {
+                "support": 329,
+                "coverage": 0.9057750759878419,
+                "accepted_accuracy": 0.9765100671140939
+              }
+            }
+          },
+          {
+            "threshold": 0.95,
+            "n_known": 2129,
+            "n_others": 2129,
+            "known_coverage": 0.8985439173320808,
+            "known_rejection_rate": 0.10145608266791921,
+            "others_rejection_rate": 0.49084077031470175,
+            "others_false_acceptance_rate": 0.5091592296852983,
+            "accepted_known_accuracy": 0.9477260846837429,
+            "accepted_total_risk": 0.3950617283950617,
+            "total_review_rate": 0.29614842649131046,
+            "closed_set_accuracy": 0.9145138562705496,
+            "closed_set_f1_macro": 0.9071387500826787,
+            "per_class": {
+              "acordao_de_2_instancia": {
+                "support": 61,
+                "coverage": 0.9344262295081968,
+                "accepted_accuracy": 0.9122807017543859
+              },
+              "agravo_em_recurso_extraordinario": {
+                "support": 428,
+                "coverage": 0.8317757009345794,
+                "accepted_accuracy": 0.8342696629213483
+              },
+              "despacho_de_admissibilidade": {
+                "support": 37,
+                "coverage": 0.8648648648648649,
+                "accepted_accuracy": 0.96875
+              },
+              "peticao_do_RE": {
+                "support": 1274,
+                "coverage": 0.9199372056514914,
+                "accepted_accuracy": 0.9752559726962458
+              },
+              "sentenca": {
+                "support": 329,
+                "coverage": 0.8996960486322189,
+                "accepted_accuracy": 0.9797297297297297
+              }
+            }
+          },
+          {
+            "threshold": 0.975,
+            "n_known": 2129,
+            "n_others": 2129,
+            "known_coverage": 0.8905589478628464,
+            "known_rejection_rate": 0.10944105213715359,
+            "others_rejection_rate": 0.5162047909816816,
+            "others_false_acceptance_rate": 0.48379520901831846,
+            "accepted_known_accuracy": 0.9509493670886076,
+            "accepted_total_risk": 0.3838004101161996,
+            "total_review_rate": 0.31282292155941754,
+            "closed_set_accuracy": 0.9145138562705496,
+            "closed_set_f1_macro": 0.9071387500826787,
+            "per_class": {
+              "acordao_de_2_instancia": {
+                "support": 61,
+                "coverage": 0.9016393442622951,
+                "accepted_accuracy": 0.9454545454545454
+              },
+              "agravo_em_recurso_extraordinario": {
+                "support": 428,
+                "coverage": 0.8084112149532711,
+                "accepted_accuracy": 0.838150289017341
+              },
+              "despacho_de_admissibilidade": {
+                "support": 37,
+                "coverage": 0.8378378378378378,
+                "accepted_accuracy": 0.967741935483871
+              },
+              "peticao_do_RE": {
+                "support": 1274,
+                "coverage": 0.9167974882260597,
+                "accepted_accuracy": 0.9768835616438356
+              },
+              "sentenca": {
+                "support": 329,
+                "coverage": 0.8996960486322189,
+                "accepted_accuracy": 0.9797297297297297
+              }
+            }
+          },
+          {
+            "threshold": 0.99,
+            "n_known": 2129,
+            "n_others": 2129,
+            "known_coverage": 0.8778769375293565,
+            "known_rejection_rate": 0.1221230624706435,
+            "others_rejection_rate": 0.5509628933771724,
+            "others_false_acceptance_rate": 0.44903710662282764,
+            "accepted_known_accuracy": 0.956661316211878,
+            "accepted_total_risk": 0.3670796460176991,
+            "total_review_rate": 0.3365429779239079,
+            "closed_set_accuracy": 0.9145138562705496,
+            "closed_set_f1_macro": 0.9071387500826787,
+            "per_class": {
+              "acordao_de_2_instancia": {
+                "support": 61,
+                "coverage": 0.8524590163934426,
+                "accepted_accuracy": 0.9423076923076923
+              },
+              "agravo_em_recurso_extraordinario": {
+                "support": 428,
+                "coverage": 0.7827102803738317,
+                "accepted_accuracy": 0.8507462686567164
+              },
+              "despacho_de_admissibilidade": {
+                "support": 37,
+                "coverage": 0.7837837837837838,
+                "accepted_accuracy": 1.0
+              },
+              "peticao_do_RE": {
+                "support": 1274,
+                "coverage": 0.9081632653061225,
+                "accepted_accuracy": 0.9809853068280034
+              },
+              "sentenca": {
+                "support": 329,
+                "coverage": 0.8996960486322189,
+                "accepted_accuracy": 0.9797297297297297
+              }
+            }
+          },
+          {
+            "threshold": 0.995,
+            "n_known": 2129,
+            "n_others": 2129,
+            "known_coverage": 0.8717707844058243,
+            "known_rejection_rate": 0.12822921559417566,
+            "others_rejection_rate": 0.5711601690934711,
+            "others_false_acceptance_rate": 0.4288398309065289,
+            "accepted_known_accuracy": 0.959051724137931,
+            "accepted_total_risk": 0.35716865294330086,
+            "total_review_rate": 0.3496946923438234,
+            "closed_set_accuracy": 0.9145138562705496,
+            "closed_set_f1_macro": 0.9071387500826787,
+            "per_class": {
+              "acordao_de_2_instancia": {
+                "support": 61,
+                "coverage": 0.8524590163934426,
+                "accepted_accuracy": 0.9423076923076923
+              },
+              "agravo_em_recurso_extraordinario": {
+                "support": 428,
+                "coverage": 0.7733644859813084,
+                "accepted_accuracy": 0.8549848942598187
+              },
+              "despacho_de_admissibilidade": {
+                "support": 37,
+                "coverage": 0.7837837837837838,
+                "accepted_accuracy": 1.0
+              },
+              "peticao_do_RE": {
+                "support": 1274,
+                "coverage": 0.9050235478806907,
+                "accepted_accuracy": 0.9809193408499567
+              },
+              "sentenca": {
+                "support": 329,
+                "coverage": 0.8844984802431611,
+                "accepted_accuracy": 0.9896907216494846
+              }
+            }
+          },
+          {
+            "threshold": 0.999,
+            "n_known": 2129,
+            "n_others": 2129,
+            "known_coverage": 0.8515735086895256,
+            "known_rejection_rate": 0.1484264913104744,
+            "others_rejection_rate": 0.6402066697980272,
+            "others_false_acceptance_rate": 0.35979333020197274,
+            "accepted_known_accuracy": 0.963596249310535,
+            "accepted_total_risk": 0.32260566110895694,
+            "total_review_rate": 0.39431658055425084,
+            "closed_set_accuracy": 0.9145138562705496,
+            "closed_set_f1_macro": 0.9071387500826787,
+            "per_class": {
+              "acordao_de_2_instancia": {
+                "support": 61,
+                "coverage": 0.8360655737704918,
+                "accepted_accuracy": 0.9411764705882353
+              },
+              "agravo_em_recurso_extraordinario": {
+                "support": 428,
+                "coverage": 0.7336448598130841,
+                "accepted_accuracy": 0.8757961783439491
+              },
+              "despacho_de_admissibilidade": {
+                "support": 37,
+                "coverage": 0.7837837837837838,
+                "accepted_accuracy": 1.0
+              },
+              "peticao_do_RE": {
+                "support": 1274,
+                "coverage": 0.8877551020408163,
+                "accepted_accuracy": 0.9814323607427056
+              },
+              "sentenca": {
+                "support": 329,
+                "coverage": 0.8753799392097265,
+                "accepted_accuracy": 0.9895833333333334
+              }
+            }
+          },
+          {
+            "threshold": 1.0,
+            "n_known": 2129,
+            "n_others": 2129,
+            "known_coverage": 0.0,
+            "known_rejection_rate": 1.0,
+            "others_rejection_rate": 1.0,
+            "others_false_acceptance_rate": 0.0,
+            "accepted_known_accuracy": null,
+            "accepted_total_risk": null,
+            "total_review_rate": 1.0,
+            "closed_set_accuracy": 0.9145138562705496,
+            "closed_set_f1_macro": 0.9071387500826787,
+            "per_class": {
+              "acordao_de_2_instancia": {
+                "support": 61,
+                "coverage": 0.0,
+                "accepted_accuracy": null
+              },
+              "agravo_em_recurso_extraordinario": {
+                "support": 428,
+                "coverage": 0.0,
+                "accepted_accuracy": null
+              },
+              "despacho_de_admissibilidade": {
+                "support": 37,
+                "coverage": 0.0,
+                "accepted_accuracy": null
+              },
+              "peticao_do_RE": {
+                "support": 1274,
+                "coverage": 0.0,
+                "accepted_accuracy": null
+              },
+              "sentenca": {
+                "support": 329,
+                "coverage": 0.0,
+                "accepted_accuracy": null
+              }
+            }
+          }
+        ]
+      },
+      "test": {
+        "confidence_diagnostics": {
+          "others_forced_labels": {
+            "despacho_de_admissibilidade": 230,
+            "peticao_do_RE": 1134,
+            "agravo_em_recurso_extraordinario": 398,
+            "sentenca": 291,
+            "acordao_de_2_instancia": 76
+          },
+          "groups": {
+            "others": {
+              "count": 2129,
+              "mean": 0.8432549507525932,
+              "percentiles": {
+                "5": 0.4704365998366848,
+                "25": 0.6834057025960647,
+                "50": 0.9754975199699403,
+                "75": 0.9998528718948365,
+                "95": 0.9999557971954346
+              },
+              "at_or_above": {
+                "0.6": {
+                  "count": 1785,
+                  "rate": 0.8384217942696102
+                },
+                "0.8": {
+                  "count": 1333,
+                  "rate": 0.6261155472052606
+                },
+                "0.9": {
+                  "count": 1171,
+                  "rate": 0.5500234852043213
+                },
+                "0.95": {
+                  "count": 1123,
+                  "rate": 0.5274776890558948
+                },
+                "0.99": {
+                  "count": 1000,
+                  "rate": 0.4697040864255519
+                }
+              }
+            },
+            "known_correct": {
+              "count": 1973,
+              "mean": 0.9767938505173142,
+              "percentiles": {
+                "5": 0.7999331031029578,
+                "25": 0.9998805046081545,
+                "50": 0.9999428033828736,
+                "75": 0.9999621868133546,
+                "95": 0.9999629735946656
+              },
+              "at_or_above": {
+                "0.6": {
+                  "count": 1946,
+                  "rate": 0.9863152559553978
+                },
+                "0.8": {
+                  "count": 1872,
+                  "rate": 0.9488089204257476
+                },
+                "0.9": {
+                  "count": 1822,
+                  "rate": 0.9234668018246326
+                },
+                "0.95": {
+                  "count": 1801,
+                  "rate": 0.9128231120121643
+                },
+                "0.99": {
+                  "count": 1752,
+                  "rate": 0.8879878357830715
+                }
+              }
+            },
+            "known_incorrect": {
+              "count": 156,
+              "mean": 0.8284371028662619,
+              "percentiles": {
+                "5": 0.5325665643878892,
+                "25": 0.6575429828328196,
+                "50": 0.8945333003997804,
+                "75": 0.9998130321502687,
+                "95": 0.999926769733429
+              },
+              "at_or_above": {
+                "0.6": {
+                  "count": 126,
+                  "rate": 0.8076923076923077
+                },
+                "0.8": {
+                  "count": 89,
+                  "rate": 0.5705128205128205
+                },
+                "0.9": {
+                  "count": 77,
+                  "rate": 0.4935897435897436
+                },
+                "0.95": {
+                  "count": 76,
+                  "rate": 0.48717948717948717
+                },
+                "0.99": {
+                  "count": 63,
+                  "rate": 0.40384615384615385
+                }
+              }
+            }
+          }
+        },
+        "selected_threshold_metrics": {
+          "threshold": 0.7812856763601305,
+          "n_known": 2129,
+          "n_others": 2129,
+          "known_coverage": 0.9379990605918271,
+          "known_rejection_rate": 0.06200093940817285,
+          "others_rejection_rate": 0.31798966651009863,
+          "others_false_acceptance_rate": 0.6820103334899014,
+          "accepted_known_accuracy": 0.9509263895843766,
+          "accepted_total_risk": 0.44940562481878804,
+          "total_review_rate": 0.18999530295913575,
+          "closed_set_accuracy": 0.9267261625176139,
+          "closed_set_f1_macro": 0.9191455774081554,
+          "per_class": {
+            "acordao_de_2_instancia": {
+              "support": 58,
+              "coverage": 0.9655172413793104,
+              "accepted_accuracy": 1.0
+            },
+            "agravo_em_recurso_extraordinario": {
+              "support": 386,
+              "coverage": 0.8782383419689119,
+              "accepted_accuracy": 0.8820058997050148
+            },
+            "despacho_de_admissibilidade": {
+              "support": 42,
+              "coverage": 0.8809523809523809,
+              "accepted_accuracy": 0.972972972972973
+            },
+            "peticao_do_RE": {
+              "support": 1332,
+              "coverage": 0.948948948948949,
+              "accepted_accuracy": 0.9596518987341772
+            },
+            "sentenca": {
+              "support": 311,
+              "coverage": 0.9678456591639871,
+              "accepted_accuracy": 0.9800664451827242
+            }
+          }
+        },
+        "confusion_with_manual_review": {
+          "acordao_de_2_instancia": {
+            "acordao_de_2_instancia": 56,
+            "agravo_em_recurso_extraordinario": 0,
+            "despacho_de_admissibilidade": 0,
+            "peticao_do_RE": 0,
+            "sentenca": 0,
+            "revisao_manual": 2
+          },
+          "agravo_em_recurso_extraordinario": {
+            "acordao_de_2_instancia": 0,
+            "agravo_em_recurso_extraordinario": 299,
+            "despacho_de_admissibilidade": 0,
+            "peticao_do_RE": 37,
+            "sentenca": 3,
+            "revisao_manual": 47
+          },
+          "despacho_de_admissibilidade": {
+            "acordao_de_2_instancia": 0,
+            "agravo_em_recurso_extraordinario": 0,
+            "despacho_de_admissibilidade": 36,
+            "peticao_do_RE": 0,
+            "sentenca": 1,
+            "revisao_manual": 5
+          },
+          "peticao_do_RE": {
+            "acordao_de_2_instancia": 2,
+            "agravo_em_recurso_extraordinario": 44,
+            "despacho_de_admissibilidade": 0,
+            "peticao_do_RE": 1213,
+            "sentenca": 5,
+            "revisao_manual": 68
+          },
+          "sentenca": {
+            "acordao_de_2_instancia": 0,
+            "agravo_em_recurso_extraordinario": 2,
+            "despacho_de_admissibilidade": 0,
+            "peticao_do_RE": 4,
+            "sentenca": 295,
+            "revisao_manual": 10
+          },
+          "outros": {
+            "acordao_de_2_instancia": 39,
+            "agravo_em_recurso_extraordinario": 225,
+            "despacho_de_admissibilidade": 129,
+            "peticao_do_RE": 892,
+            "sentenca": 167,
+            "revisao_manual": 677
+          }
+        }
+      }
+    }
+  }
+}
