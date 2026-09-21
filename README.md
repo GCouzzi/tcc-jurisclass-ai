@@ -17,15 +17,15 @@ Além de todo o pipeline de experimentação, limpeza de dados e treinamento, o 
 O projeto é dividido em três grandes blocos:
 
 1. **Pipeline de Machine Learning (Treinamento e Baselines)**
-   - Algoritmos para extração, balanceamento e limpeza do Dataset.
+   - Limpeza do dataset, exclusão da classe residual `outros` e cálculo de pesos para as classes conhecidas.
    - Scripts de _Grid Search_ para otimização de hiperparâmetros (Hugging Face Trainer).
    - Validação Cruzada Estratificada de 5 Folds (`cross_validation.py`).
    - Avaliação de Baselines: TF-IDF + Regressão Logística, TF-IDF + SVM, Bertimbau e LegalBERT Vanilla.
 
 2. **Backend (FastAPI)**
-   - API de Inferência REST rápida e escalável.
+   - API REST de inferência com FastAPI.
    - Integração com OCR Tesseract para extrair texto de PDFs escaneados.
-   - Suporte dinâmico para rodar o modelo no modo _Single Fold_ (Best Fold) ou em modo **Ensemble** (agrupando os 5 modelos gerados no Cross-Validation por meio de Soft Voting).
+   - Modo configurável de um único fold ou **ensemble** dos cinco folds por Soft Voting.
 
 3. **Frontend (Painel Web)**
    - Aplicação SPA vanilla (HTML, CSS, JS) responsiva e intuitiva.
@@ -44,7 +44,9 @@ O sistema trabalha com **5 classes documentais**:
 * Recurso Extraordinário (Petição do RE)
 * Sentença
 
-O modelo final em produção emprega um sistema de **Soft Voting Ensemble**. Os tensores e configurações de cada um dos 5 folds são carregados na memória. Para cada requisição, os cinco modelos avaliam o documento, as probabilidades (softmax) de cada modelo são somadas e divididas, gerando uma predição robusta, minimizando a variância e mitigando o risco de overfitting para uma distribuição específica.
+A configuração padrão da aplicação emprega **Soft Voting Ensemble**. Os cinco modelos publicados no Hugging Face Hub são carregados na memória. Para cada requisição, todos avaliam o texto e suas distribuições softmax são combinadas por média aritmética. Nos resultados versionados neste repositório, o ensemble superou o melhor fold isolado em acurácia e F1-macro no conjunto de teste.
+
+O treinamento e a avaliação foram realizados por página. Na API, o texto extraído de um PDF é concatenado e tokenizado com limite de 512 tokens, incluindo tokens especiais. Portanto, em PDFs longos, a classificação representa apenas o trecho inicial que couber nesse limite; ela não equivale à análise integral do documento.
 
 ---
 
@@ -54,15 +56,14 @@ A maneira mais fácil e segura de rodar a aplicação completa é utilizando o D
 
 ### Pré-requisitos
 - [Docker](https://www.docker.com/) e [Docker Compose](https://docs.docker.com/compose/) instalados.
-- Ter os pesos dos modelos (`model.safetensors`) gerados e posicionados corretamente na pasta `results/results_cv/fold_X/best_model`. *(Nota: devido ao tamanho, os tensores são versionados via Git LFS).*
+- Conexão com a internet na primeira inicialização, para baixar os pesos públicos do Hugging Face Hub. Os pesos não fazem parte deste repositório Git.
 
 ### Passos para Inicialização
 
-1. Clone o repositório (Certifique-se de usar o Git LFS se desejar baixar os tensores hospedados no repositório):
+1. Clone o repositório:
    ```bash
    git clone https://github.com/GCouzzi/implementacao-tcc-testes.git
    cd implementacao-tcc-testes
-   git lfs pull
    ```
 
 2. Construa as imagens e levante os serviços:
@@ -74,7 +75,7 @@ A maneira mais fácil e segura de rodar a aplicação completa é utilizando o D
    - **Painel Web (Frontend):** [http://localhost:5500](http://localhost:5500)
    - **Documentação da API (Swagger):** [http://localhost:8000/docs](http://localhost:8000/docs)
 
-*(Se desejar alterar do modo Ensemble para um único modelo leve, edite a variável `USE_ENSEMBLE=true` para `false` no arquivo `docker-compose.yml` e reinicie os containers).*
+Para carregar somente um fold, crie o `.env` a partir de `.env.example`, defina `USE_ENSEMBLE=false` e escolha `FALLBACK_FOLD` entre 1 e 5. O padrão é o ensemble dos cinco folds.
 
 ---
 
@@ -82,16 +83,22 @@ A maneira mais fácil e segura de rodar a aplicação completa é utilizando o D
 
 ```text
 ├── backend/                   # API em FastAPI, integração OCR e scripts de inferência
+│   ├── Dockerfile             # Imagem Docker do backend (multi-stage, CPU-only)
+│   └── .dockerignore          # Exclusões do contexto de build
 ├── frontend/                  # Frontend (HTML, CSS, JS puros)
+│   ├── Dockerfile             # Imagem Docker do frontend (Nginx)
+│   ├── nginx.conf             # Proxy reverso para o backend e headers de segurança
+│   └── .dockerignore          # Exclusões do contexto de build
 ├── baselines/                 # Scripts de treinamento dos modelos de baseline (TF-IDF, SVM, etc)
 ├── dataset_clean/             # (Ignorado no Git) Dados limpos gerados pelo pré-processamento
 ├── dataset_victor/            # (Ignorado no Git) Dataset bruto original
 ├── results/                   # Resultados, matrizes de confusão e arquivos CSV das métricas
-│   └── results_cv/            # Onde os modelos (Folds 1 a 5) devem ficar salvos
+│   └── results_cv/            # Métricas versionadas; os pesos gerados aqui são ignorados pelo Git
 ├── cross_validation.py        # Script de Fine-tuning (Stratified 5-Fold)
 ├── grid_search.py             # Busca manual de hiperparâmetros com Hugging Face Trainer
-├── pre_processamento.py       # Limpeza e balanceamento do dataset
+├── pre_processamento.py       # Limpeza do dataset e cálculo de pesos das classes
 ├── docker-compose.yml         # Orquestração do Backend e Frontend
+├── .env.example               # Variáveis de ambiente documentadas (copiar para .env)
 └── .gitattributes             # Regras de atributos do Git
 ```
 
@@ -171,10 +178,10 @@ O arquivo `class_weights.json` é calculado somente a partir das classes de `tra
 Para testar as combinações definidas em `grid_search.py`, execute:
 
 ```bash
-python grid_search.py
+python grid_search.py --overwrite
 ```
 
-O script treina com `train_clean.csv`, avalia cada combinação com `val_clean.csv` e salva o ranking em `results/grid_search_results.csv`. O conjunto de teste não participa da busca de hiperparâmetros.
+O parâmetro `--overwrite` é necessário porque o repositório já inclui `results/grid_search_results.csv`. O script exige uma GPU CUDA, treina com `train_clean.csv`, avalia cada combinação com `val_clean.csv` e substitui o ranking versionado. O conjunto de teste não participa da busca de hiperparâmetros.
 
 No Google Colab, ative uma GPU, copie o projeto e execute:
 
@@ -195,7 +202,9 @@ python cross_validation.py
 
 Esse script usa `train_clean.csv` para criar os cinco folds estratificados. Em cada rodada, quatro folds são usados para treinamento e um para validação. O arquivo `val_clean.csv` não é usado nessa etapa. O `test_clean.csv` permanece separado e é usado somente na avaliação final do melhor fold e do ensemble.
 
-Os modelos e relatórios são salvos em `results/results_cv/`. Para retomar uma execução interrompida, ajuste a constante `START_FROM_FOLD` em `cross_validation.py`.
+Os modelos e relatórios são salvos em `results/results_cv/`. Os diretórios de pesos `fold_N/best_model` são ignorados pelo Git; somente os relatórios e gráficos presentes no repositório estão versionados. Para retomar uma execução interrompida, ajuste a constante `START_FROM_FOLD` em `cross_validation.py` e garanta que os modelos dos folds anteriores ainda estejam disponíveis localmente ou no diretório de backup configurado no script.
+
+Apesar do nome `best_model`, o cross-validation não seleciona a melhor época dentro de cada fold: ele salva o estado ao final das cinco épocas configuradas. Depois, o “melhor fold” é escolhido comparando o F1-macro de validação dos cinco estados finais.
 
 ### Uso de train, validation e test por script
 
@@ -211,15 +220,24 @@ Os modelos e relatórios são salvos em `results/results_cv/`. Para retomar uma 
 
 ### 6. Execute a aplicação com Docker
 
-Depois que `results/class_weights.json` estiver disponível, execute. Os modelos serão obtidos do Hugging Face Hub na inicialização:
+Os cinco modelos são obtidos automaticamente do repositório público `gcouzzi/jurisclass-legalbertpt` no Hugging Face Hub e mantidos no volume `hf-model-cache`. A revisão é fixada em `backend/model_source.py` e em `docker-compose.yml`, garantindo que a aplicação use os mesmos pesos avaliados no projeto. A pasta local `results/results_cv` deste clone contém relatórios, não os pesos necessários à inferência.
 
 ```bash
+cp .env.example .env
+# Edite .env se necessário (ex: HF_TOKEN para repositórios privados)
 docker compose up -d --build
 ```
 
-O backend usa os modelos treinados para inferência e não lê diretamente os CSVs do dataset. O frontend fica disponível em [http://localhost:5500](http://localhost:5500), e a documentação da API em [http://localhost:8000/docs](http://localhost:8000/docs).
+O frontend (Nginx) atua como proxy reverso: as chamadas do browser para `/api/*` são roteadas internamente para o backend, sem depender de IP ou porta exposta do backend.
 
-*Nota: o treinamento de Transformers é significativamente mais rápido com uma GPU compatível com CUDA.*
+- **Painel Web (Frontend):** [http://localhost:5500](http://localhost:5500)
+- **Documentação da API (Swagger):** [http://localhost:8000/docs](http://localhost:8000/docs)
+
+O backend usa os modelos treinados para inferência e não lê diretamente os CSVs do dataset.
+
+Para PDFs, todas as páginas são renderizadas pelo PyMuPDF a 300 DPI e processadas pelo Tesseract em português, inclusive quando o arquivo já contém texto digital. Isso mantém um único fluxo para PDFs digitais, escaneados e mistos, ao custo de maior tempo de processamento e da possibilidade de erros próprios de OCR. PDFs inválidos, corrompidos, vazios ou protegidos por senha são rejeitados com HTTP 422.
+
+*Nota: `grid_search.py` exige GPU CUDA. `cross_validation.py` também se beneficia fortemente de GPU, embora permita execução em CPU. O Compose fornecido não configura acesso a GPU para o backend.*
 
 ---
 
@@ -238,7 +256,7 @@ O backend usa os modelos treinados para inferência e não lê diretamente os CS
 
 Execute `python teste_others.py`. O script compara o melhor fold (fold 5) com o ensemble dos cinco folds, escolhe um limiar próprio para cada configuração usando somente a validação e grava um único arquivo: `results/rejection/resultado_others.json`. Por padrão, usa 2.129 páginas Others e 2.129 conhecidas em cada partição.
 
-Os pesos são baixados do repositório público https://huggingface.co/gcouzzi/jurisclass-legalbertpt na revisão fixa registrada no código. Para usar os pesos locais, acrescente `--local-models`.
+Os pesos são baixados do repositório público <https://huggingface.co/gcouzzi/jurisclass-legalbertpt> na revisão fixa registrada no código. A opção `--local-models` só funciona se os cinco diretórios `fold_N/best_model` tiverem sido previamente gerados ou obtidos fora deste repositório; eles não estão incluídos no clone.
 
 ### Ativar a revisão por limiar no painel
 
@@ -248,6 +266,6 @@ Depois de executar `teste_others.py`, use o limiar selecionado para a mesma conf
 CONFIDENCE_THRESHOLD=0.98765
 ```
 
-Use ponto como separador decimal e substitua o exemplo pelo valor de `configurations.ensemble_5_folds.validation.selected_threshold.threshold` no JSON. Reinicie os serviços com `docker compose up -d --build`. Para o fold 5 individual, configure também `USE_ENSEMBLE=false` e use o limiar de `configurations.best_fold_5`.
+Use ponto como separador decimal e substitua o exemplo pelo valor de `configurations.ensemble_5_folds.validation.selected_threshold.threshold` no JSON. Reinicie os serviços com `docker compose up -d --build`. Para o fold 5 individual, defina também `USE_ENSEMBLE=false`, `FALLBACK_FOLD=5` e use o limiar de `configurations.best_fold_5`.
 
 Se `CONFIDENCE_THRESHOLD` estiver ausente ou vazio, o mecanismo de revisão fica desativado: o painel retorna normalmente a classe de maior pontuação. Quando a variável estiver definida, pontuações abaixo do limiar retornam `Não classificado` e `Revisão manual necessária`; pontuações iguais ou superiores continuam classificadas.

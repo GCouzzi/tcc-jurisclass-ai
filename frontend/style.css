@@ -14,6 +14,10 @@
   --teal-mid:    #0F6E56;
   --teal-border: #9FE1CB;
 
+  --info-bg:     #EFF6FF;
+  --info-border: #BFDBFE;
+  --info-text:   #1E4976;
+
   --text-primary:   #111827;
   --text-secondary: #6B7280;
   --text-tertiary:  #9CA3AF;
@@ -317,6 +321,25 @@ textarea::placeholder { color: var(--text-tertiary); }
 }
 
 .char-warn { color: #CA8A04; }
+
+.model-limit-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 14px;
+  padding: 10px 12px;
+  color: var(--info-text);
+  background: var(--info-bg);
+  border: 1px solid var(--info-border);
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.model-limit-note i {
+  flex-shrink: 0;
+  margin-top: 3px;
+}
 
 .btn-classify {
   width: 100%;

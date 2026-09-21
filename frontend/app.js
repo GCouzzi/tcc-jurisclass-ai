@@ -1,6 +1,6 @@
 "use strict";
 
-const API_BASE = "http://127.0.0.1:8000";
+const API_BASE = "/api";
 
 const DOC_CLASSES = [
   {
@@ -179,10 +179,8 @@ function classify() {
 }
 
 const EXTRACTION_LABELS = {
-  pymupdf: "PDF Digital",
   ocr: "OCR (Tesseract)",
   text_input: "Texto direto",
-  pymupdf_insufficient: "PDF (texto parcial)",
 };
 
 function renderResult(label, confidence, scores, extractionMethod, requiresReview = false) {
@@ -196,7 +194,6 @@ function renderResult(label, confidence, scores, extractionMethod, requiresRevie
     : docClass.desc;
   document.getElementById("conf-pct").textContent     = pct + "%";
 
-  // Mostrar método de extração
   const methodEl = document.getElementById("extraction-method");
   if (methodEl && extractionMethod) {
     methodEl.textContent = EXTRACTION_LABELS[extractionMethod] || extractionMethod;
@@ -297,4 +294,4 @@ function showError(message) {
 
   setTimeout(() => { if (el.parentNode) el.remove(); }, 5000);
 }
-
+

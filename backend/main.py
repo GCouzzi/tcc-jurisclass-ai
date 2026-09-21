@@ -13,7 +13,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from config import CORS_ORIGINS, MIN_TEXT_LENGTH, MAX_FILE_SIZE_MB, CONFIDENCE_THRESHOLD
 from preprocessing import clean_text
-from ocr import extract_text_from_pdf
+from ocr import PdfExtractionError, extract_text_from_pdf
 from classifier import classifier
 
 # ─── Logging ─────────────────────────────────────────────────────────────────
@@ -103,7 +103,8 @@ async def classify_document(
     # ─── Extração de texto ────────────────────────────────────────────────
     if file is not None:
         # Validar tipo
-        if not file.filename.lower().endswith(".pdf"):
+        filename = file.filename or ""
+        if not filename.lower().endswith(".pdf"):
             raise HTTPException(
                 status_code=400,
                 detail="Apenas arquivos PDF são aceitos.",
@@ -119,12 +120,12 @@ async def classify_document(
                 detail=f"O arquivo excede o limite de {MAX_FILE_SIZE_MB} MB.",
             )
 
-        logger.info("PDF recebido: %s (%d bytes)", file.filename, len(file_bytes))
+        logger.info("PDF recebido: %s (%d bytes)", filename, len(file_bytes))
 
         # Extrair texto
         try:
             raw_text, extraction_method = extract_text_from_pdf(file_bytes)
-        except RuntimeError as e:
+        except PdfExtractionError as e:
             raise HTTPException(status_code=422, detail=str(e))
 
         logger.info(

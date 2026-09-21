@@ -6,14 +6,13 @@ services:
       - "8000:8000"
     volumes:
       - ./results/results_cv:/models:ro
-      - ./results/class_weights.json:/app/class_weights.json:ro
       - hf-model-cache:/root/.cache/huggingface
     environment:
       - MODEL_DIR=/models
-      - USE_ENSEMBLE=true
-      - FALLBACK_FOLD=5
+      - USE_ENSEMBLE=${USE_ENSEMBLE:-true}
+      - FALLBACK_FOLD=${FALLBACK_FOLD:-5}
       - CONFIDENCE_THRESHOLD=${CONFIDENCE_THRESHOLD:-}
-      - HF_MODEL_REPO=${HF_MODEL_REPO-gcouzzi/jurisclass-legalbertpt}
+      - HF_MODEL_REPO=${HF_MODEL_REPO:-gcouzzi/jurisclass-legalbertpt}
       - HF_MODEL_REVISION=${HF_MODEL_REVISION:-f1b1130e7d7dd59c286c4928a5ca90b893528ed4}
       - HF_TOKEN
       - CORS_ORIGINS=*
@@ -24,6 +23,9 @@ services:
     container_name: jurisclass-frontend
     ports:
       - "5500:80"
+    depends_on:
+      backend:
+        condition: service_healthy
     restart: unless-stopped
 
 volumes:

@@ -46,6 +46,15 @@
     <section class="card" aria-labelledby="input-heading">
       <h2 id="input-heading" class="section-label">Entrada do documento</h2>
 
+      <div class="model-limit-note" role="note">
+        <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+        <p>
+          <strong>Observação:</strong> o modelo considera no máximo os primeiros
+          512 tokens do texto processado. Em documentos longos, trechos finais podem não
+          influenciar a classificação.
+        </p>
+      </div>
+
       <div class="tabs" role="tablist">
         <button class="tab active" id="tab-upload-btn" role="tab"
                 aria-selected="true" aria-controls="upload-panel"
