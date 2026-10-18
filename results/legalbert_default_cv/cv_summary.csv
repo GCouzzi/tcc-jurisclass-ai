@@ -1,0 +1,2 @@
+modelo,epochs,batch_size,learning_rate,warmup_steps,n_splits,cv_mean_f1_macro,cv_std_f1_macro,cv_mean_accuracy,cv_std_accuracy,best_fold,best_fold_val_f1,best_fold_test_f1_macro,best_fold_test_accuracy,ensemble_test_f1_macro,ensemble_test_accuracy
+raquelsilveira/legalbertpt_fp,3,16,5e-05,0,5,0.916863957182492,0.010143647153051707,0.9398528686449026,0.004464690134444784,5,0.9259072782776588,0.8953135866929219,0.9030183077684315,0.9078394875072806,0.9176645225136071
