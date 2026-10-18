@@ -14,12 +14,17 @@ ENV/
 .ipynb_checkpoints/
 
 # Datasets
-dataset_victor/
+dataset_victor/*
+!dataset_victor/.gitkeep
 dataset_clean/
 
 # Models and checkpoints
 checkpoint-*/
 results/results_cv/fold_*/best_model/
+results/bertimbau_cv/fold_*/best_model/
+results/legalbert_default_cv/fold_*/best_model/
+results/bertimbau_cv_dry_run/fold_*/best_model/
+results/legalbert_default_cv_dry_run/fold_*/best_model/
 
 # OS
 .DS_Store
