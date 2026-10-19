@@ -1,0 +1,2 @@
+modelo,accuracy_test,precision_macro_test,recall_macro_test,f1_macro_test,f1_weighted_test
+Best Fold (Fold 1),0.909450766947056,0.8830304701544047,0.9043459160513528,0.8930039536416527,0.9096065049145888

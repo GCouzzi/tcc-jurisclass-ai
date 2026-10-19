@@ -1,0 +1,2 @@
+modelo,epochs,batch_size,learning_rate,warmup_steps,n_splits,cv_mean_f1_macro,cv_std_f1_macro,cv_mean_accuracy,cv_std_accuracy,best_fold,best_fold_val_f1,best_fold_test_f1_macro,best_fold_test_accuracy,ensemble_test_f1_macro,ensemble_test_accuracy
+neuralmind/bert-base-portuguese-cased,3,16,5e-05,0,5,0.9107005895625158,0.010640461379074817,0.9384580937231272,0.006138093370916746,1,0.9201180601843522,0.8930039536416527,0.909450766947056,0.9007467103151923,0.9143988124690747
