@@ -1,0 +1,2 @@
+modelo,cv_strategy,epochs,batch_size,learning_rate,warmup_steps,n_splits,total_train_pages,total_train_groups,cv_mean_f1_macro,cv_std_f1_macro,cv_mean_accuracy,cv_std_accuracy,best_fold,best_fold_val_f1,best_fold_test_f1_macro,best_fold_test_accuracy,ensemble_test_f1_macro,ensemble_test_accuracy
+raquelsilveira/legalbertpt_fp,StratifiedGroupKFold (process_document),5,16,5e-05,500,5,15063,1545,0.87151712761569,0.017162677857249467,0.8917388720619754,0.016409340567065493,3,0.8914272085352024,0.8965151246387121,0.9138050470064325,0.9073139392277045,0.9209302325581395
