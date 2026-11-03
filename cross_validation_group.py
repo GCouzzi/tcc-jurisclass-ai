@@ -1,14 +1,12 @@
 import pandas as pd
 import numpy as np
 import torch
-import json
 import time
 import os
 import gc
 import shutil
 import matplotlib.pyplot as plt
 import seaborn as sns
-from torch import nn
 from torch.utils.data import Dataset
 from torch.nn.functional import softmax
 from transformers import (
@@ -228,10 +226,7 @@ def main():
         df_train_full = df_train_full.head(1000).reset_index(drop=True)
         df_test = df_test.head(200).reset_index(drop=True)
 
-    with open("results/class_weights.json", "r") as f:
-        class_weights_dict = json.load(f)
-
-    classes = sorted(list(class_weights_dict.keys()))
+    classes = sorted(df_train_full["document_type"].unique().tolist())
     label2id = {c: i for i, c in enumerate(classes)}
     id2label = {i: c for i, c in enumerate(classes)}
     num_labels = len(classes)
@@ -239,9 +234,7 @@ def main():
     labels_names = [id2label[i] for i in range(num_labels)]
     labels_abrev = ['Acórdão', 'ARE', 'Despacho', 'RE', 'Sentença']
 
-    weights_list = [class_weights_dict[c] for c in classes]
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    class_weights_tensor = torch.tensor(weights_list, dtype=torch.float).to(device)
 
     # Construir grupos de documentos para evitar data leakage
     groups_series = build_groups(df_train_full, mode=GROUP_MODE)
@@ -252,7 +245,7 @@ def main():
     print(f"  Teste:             {len(df_test)} páginas")
     print(f"  Device:            {device}")
     print(f"  Classes:           {classes}")
-    print(f"  Pesos:             {weights_list}")
+    print("  Balanceamento:     Nenhum (CrossEntropyLoss padrão, sem class_weights)")
 
     # =========================================================================
     # 2. TOKENIZAÇÃO DO CONJUNTO DE TESTE (feita uma única vez)
@@ -266,19 +259,7 @@ def main():
     test_dataset = LegalDataset(test_encodings, test_labels)
 
     # =========================================================================
-    # 3. WEIGHTED TRAINER
-    # =========================================================================
-    class WeightedTrainer(Trainer):
-        def compute_loss(self, model, inputs, return_outputs=False, **kwargs):
-            labels = inputs.pop("labels")
-            outputs = model(**inputs)
-            logits = outputs.logits
-            loss_fct = nn.CrossEntropyLoss(weight=class_weights_tensor)
-            loss = loss_fct(logits.view(-1, self.model.config.num_labels), labels.view(-1))
-            return (loss, outputs) if return_outputs else loss
-
-    # =========================================================================
-    # 4. STRATIFIED GROUP K-FOLD CROSS-VALIDATION
+    # 3. STRATIFIED GROUP K-FOLD CROSS-VALIDATION
     # =========================================================================
     print(f"\n[3/7] Iniciando StratifiedGroupKFold ({N_SPLITS}-Fold) por '{GROUP_MODE}'...")
     sgkf = StratifiedGroupKFold(n_splits=N_SPLITS, shuffle=True, random_state=RANDOM_STATE)
@@ -414,7 +395,7 @@ def main():
             report_to="none",
         )
 
-        trainer = WeightedTrainer(
+        trainer = Trainer(
             model=model,
             args=training_args,
             train_dataset=fold_train_dataset,
@@ -489,7 +470,7 @@ def main():
             torch.cuda.empty_cache()
 
     # =========================================================================
-    # 5. RESUMO DA CROSS-VALIDATION
+    # 4. RESUMO DA CROSS-VALIDATION
     # =========================================================================
     print(f"\n{'=' * 60}")
     print(f" RESUMO DA {N_SPLITS}-FOLD STRATIFIED GROUP CROSS-VALIDATION")
@@ -523,7 +504,7 @@ def main():
     print(f"\n  ★ Melhor Fold: {best_fold_num} (F1 Macro = {best_fold_f1:.4f})")
 
     # =========================================================================
-    # 6. AVALIAÇÃO NO TESTE — BEST FOLD
+    # 5. AVALIAÇÃO NO TESTE — BEST FOLD
     # =========================================================================
     print(f"\n[4/7] Avaliando BEST FOLD (Fold {best_fold_num}) no conjunto de Teste...")
 
@@ -553,7 +534,7 @@ def main():
         torch.cuda.empty_cache()
 
     # =========================================================================
-    # 7. AVALIAÇÃO NO TESTE — ENSEMBLE (SOFT VOTING)
+    # 6. AVALIAÇÃO NO TESTE — ENSEMBLE (SOFT VOTING)
     # =========================================================================
     available_models = [(i + 1, p) for i, p in enumerate(fold_model_paths) if os.path.isdir(p)]
     ensemble_results = None
@@ -594,7 +575,7 @@ def main():
         )
 
         # =====================================================================
-        # 8. COMPARAÇÃO FINAL
+        # 7. COMPARAÇÃO FINAL
         # =====================================================================
         print(f"\n[6/7] Gerando comparação final...")
 
@@ -616,13 +597,14 @@ def main():
         print("[6/7] Comparação Ensemble pulada (rode com START_FROM_FOLD = 1 para gerar todos os 5 folds).")
 
     # =========================================================================
-    # 9. SALVAR RESUMO GERAL
+    # 8. SALVAR RESUMO GERAL
     # =========================================================================
     print(f"\n[7/7] Salvando resumo geral...")
 
     summary = {
         'modelo': MODEL_NAME,
         'cv_strategy': f'StratifiedGroupKFold ({GROUP_MODE})',
+        'class_weighting': 'none',
         'epochs': BEST_EPOCHS,
         'batch_size': BEST_BATCH_SIZE,
         'learning_rate': BEST_LR,
