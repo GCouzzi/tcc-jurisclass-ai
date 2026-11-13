@@ -198,6 +198,8 @@ def main():
     }
     pd.DataFrame([results_summary]).to_csv(f'{OUTPUT_DIR}/legalbert_default_results.csv', index=False)
     df_metrics.to_csv(f'{OUTPUT_DIR}/legalbert_default_per_class.csv', index=False)
+    np.save(f'{OUTPUT_DIR}/y_test_pred.npy', y_test_pred)
+    np.save(f'{OUTPUT_DIR}/y_test_true.npy', y_test_true)
     
     print("Tudo concluído com sucesso!")
 

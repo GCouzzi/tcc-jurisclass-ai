@@ -148,6 +148,8 @@ def main():
     df_summary = pd.DataFrame([results_summary])
     df_summary.to_csv(f'{out_dir}/baseline_tfidf_lr_results.csv', index=False)
     df_metrics.to_csv(f'{out_dir}/baseline_tfidf_lr_per_class.csv', index=False)
+    np.save(f'{out_dir}/y_test_pred.npy', y_test_pred)
+    np.save(f'{out_dir}/y_test_true.npy', y_test)
 
     print("\n[6/6] Processo finalizado com sucesso!")
     print(f"  - {out_dir}/baseline_tfidf_lr_results.csv (resumo geral)")

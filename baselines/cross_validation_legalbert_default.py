@@ -348,6 +348,10 @@ def main():
         print(f'Ensemble: inferência do fold {fold}/{N_SPLITS}')
         all_probs.append(predict_probabilities(model_path, test_dataset, output / 'evaluation', device))
     ensemble_probs = np.mean(all_probs, axis=0)
+    # Predições página a página (mesma ordem de test_clean.csv); copiadas ao Drive no backup final.
+    np.save(output / 'y_test_true.npy', y_true)
+    np.save(output / 'best_fold_test_pred.npy', best_probs.argmax(axis=1))
+    np.save(output / 'ensemble_test_pred.npy', ensemble_probs.argmax(axis=1))
     ensemble_result = evaluate_and_report(
         y_true, ensemble_probs.argmax(axis=1), classes, 'Ensemble (Soft Voting)', output / 'ensemble',
     )

@@ -1,0 +1,9 @@
+Modelo A,Modelo B,"b (A certo, B errado)","c (A errado, B certo)",chi2,p_raw,p_adj,Significativo (p < 0.05)
+JurisClass AI (Ensemble final),TF-IDF + Regressão Logística,955,248,414.3275145469659,4.1893784968262976e-92,3.351502797461038e-91,Sim
+JurisClass AI (Ensemble final),TF-IDF + SVM,665,278,158.00212089077414,3.091558835696846e-36,2.1640911849877923e-35,Sim
+JurisClass AI (Ensemble final),BERTimbau Base (Treino Único),296,109,85.42222222222222,2.4099693292660816e-20,1.2049846646330407e-19,Sim
+JurisClass AI (Ensemble final),LegalBert-pt Ref. (Treino Único),339,113,112.00221238938053,3.569116885989439e-26,2.1414701315936633e-25,Sim
+JurisClass AI (Ensemble final),BERTimbau CV (Ensemble),237,125,34.03591160220994,5.410423229334118e-09,2.164169291733647e-08,Sim
+JurisClass AI (Ensemble final),LegalBert-pt CV (Ensemble),167,90,22.474708171206224,2.1292880205185123e-06,4.258576041037025e-06,Sim
+JurisClass AI (Ensemble final),JurisClass AI (Best Fold),177,88,29.222641509433963,6.452082953195328e-08,1.9356248859585983e-07,Sim
+LegalBert-pt Ref. (Treino Único),BERTimbau Base (Treino Único),226,265,2.9409368635437882,0.08636062999504493,0.08636062999504493,Não

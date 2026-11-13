@@ -567,6 +567,14 @@ def main():
         ensemble_probs = np.mean(all_probs, axis=0)
         y_test_pred_ensemble = np.argmax(ensemble_probs, axis=1)
 
+        # Predições página a página (mesma ordem de test_clean.csv).
+        np.save(os.path.join(OUTPUT_DIR, "y_test_true.npy"), y_test_true)
+        np.save(os.path.join(OUTPUT_DIR, "best_fold_test_pred.npy"), y_test_pred_best)
+        np.save(os.path.join(OUTPUT_DIR, "ensemble_test_pred.npy"), y_test_pred_ensemble)
+        if DRIVE_BACKUP_DIR:
+            for fname in ("y_test_true.npy", "best_fold_test_pred.npy", "ensemble_test_pred.npy"):
+                shutil.copy2(os.path.join(OUTPUT_DIR, fname), os.path.join(DRIVE_BACKUP_DIR, fname))
+
         ensemble_results = evaluate_and_report(
             y_test_true, y_test_pred_ensemble,
             labels_names, labels_abrev,
