@@ -1,2 +1,2 @@
 modelo,epochs,batch_size,learning_rate,accuracy_test,f1_macro_test,f1_weighted_test
-LegalBERT-pt Default,3,16,5e-5,0.9140029688273132,0.9012742313342962,0.9147437451785224
+LegalBERT-pt Default,3,16,5e-5,0.904997525977239,0.8958047312886211,0.9063584619943832

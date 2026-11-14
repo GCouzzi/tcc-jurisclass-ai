@@ -29,3 +29,5 @@ results/legalbert_default_cv_dry_run/fold_*/best_model/
 # OS
 .DS_Store
 Thumbs.db
+
+TCC_Gabriel_de_Salles
